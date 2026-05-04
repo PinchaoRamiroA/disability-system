@@ -1,0 +1,1 @@
+export { LocationsReview } from './LocationsReview'

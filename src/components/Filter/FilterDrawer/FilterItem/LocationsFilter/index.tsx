@@ -1,0 +1,1 @@
+export { LocationsFilter } from './LocationsFilter'

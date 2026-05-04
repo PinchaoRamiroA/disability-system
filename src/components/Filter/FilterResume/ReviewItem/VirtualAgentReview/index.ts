@@ -1,0 +1,1 @@
+export { VirtualAgentReview } from './VirtualAgentReview'

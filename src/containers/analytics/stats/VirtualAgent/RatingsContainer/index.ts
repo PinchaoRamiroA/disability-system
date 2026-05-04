@@ -1,0 +1,1 @@
+export { RatingsContainer } from './RatingsContainer'

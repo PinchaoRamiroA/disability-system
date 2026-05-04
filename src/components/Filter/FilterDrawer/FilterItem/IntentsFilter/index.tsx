@@ -1,0 +1,1 @@
+export { IntentsFilter } from './IntentsFilter'

@@ -1,0 +1,1 @@
+export { ChatsContainer } from './ChatsContainer'

@@ -1,0 +1,1 @@
+export { VirtualAgentFilter } from './VirtualAgentFilter'

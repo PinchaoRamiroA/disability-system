@@ -1,0 +1,21 @@
+body {
+    /* background-color: antiquewhite !important; */
+    /* font-family: 'Anta', sans-serif; */
+    /* font-style: italic; */
+}
+.message-box > p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.last-interaction > p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    margin: 0;
+}
+
+.react-datepicker-popper {
+    z-index: 3;
+}

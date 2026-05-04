@@ -1,0 +1,1 @@
+export { FormularioEntradaContainer } from './FormularioEntradaContainer'

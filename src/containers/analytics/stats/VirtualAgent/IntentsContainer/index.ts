@@ -1,0 +1,1 @@
+export { IntentsContainer } from './IntentsContainer'
