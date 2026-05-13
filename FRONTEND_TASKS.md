@@ -189,18 +189,18 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 ### 🔵 PRIORIDAD 9 - REPORTES (Semana 5-6)
 
 #### 9.1 Reportes Administrativos
-- [ ] 9.1.1 Crear página /reportes
-- [ ] 9.1.2 Tipos: incapacidades por entidad, ausentismo, pagos pendientes, jurídico
-- [ ] 9.1.3 Filtros: fecha, entidad, tipo, estado
-- [ ] 9.1.4 Integrar POST /reportes
+- [x] 9.1.1 Crear página /reportes
+- [x] 9.1.2 Tipos: incapacidades, ausentismo, cartera, juridico, sg-sst
+- [x] 9.1.3 Filtros: fecha, entidad, tipo, estado
+- [x] 9.1.4 Integrar POST /reportes
 - [ ] 9.1.5 Exportar PDF y Excel
-- [ ] 9.1.6 Integrar GET /reportes/resumen-ejecutivo
+- [x] 9.1.6 Integrar GET /reportes/resumen-ejecutivo
 
 #### 9.2 Reporte SG-SST
-- [ ] 9.2.1 Indicadores de ausentismo mensual
-- [ ] 9.2.2 Días perdidos
-- [ ] 9.2.3 Incapacidades recurrentes
-- [ ] 9.2.4 Incapacidades >180 días
+- [x] 9.2.1 Indicadores de ausentismo mensual
+- [x] 9.2.2 Días perdidos
+- [x] 9.2.3 Incapacidades recurrentes
+- [x] 9.2.4 Incapacidades >180 días
 
 ---
 
