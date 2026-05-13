@@ -2,17 +2,38 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
+import Badge from '@mui/material/Badge'
 import MenuIcon from '@mui/icons-material/Menu'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { UserMenu } from './UserMenu'
 import { Box } from '@mui/material'
 import { LogoOrg } from './LogoOrg'
+import { useEffect, useState } from 'react'
+import { getCountNotificacionesNoLeidas } from '@/services/api/notificaciones'
 
 interface Props {
 	handleDrawerToggle: () => void
 }
 
 export const Appbar = ({ handleDrawerToggle }: Props) => {
+	const router = useRouter()
+	const [unreadCount, setUnreadCount] = useState(0)
+
+	useEffect(() => {
+		const loadCount = async () => {
+			try {
+				const res = await getCountNotificacionesNoLeidas()
+				setUnreadCount(res.data.data?.count || 0)
+			} catch {
+			}
+		}
+		loadCount()
+		const interval = setInterval(loadCount, 60000)
+		return () => clearInterval(interval)
+	}, [])
+
 	return (
 		<AppBar
 			position="fixed"
@@ -51,6 +72,16 @@ export const Appbar = ({ handleDrawerToggle }: Props) => {
 						Sistema de Gestión de Incapacidades
 					</Typography>
 				</Box>
+
+				<IconButton
+					color="inherit"
+					onClick={() => router.push('/alertas')}
+					aria-label="Ver alertas"
+				>
+					<Badge badgeContent={unreadCount} color="error">
+						<NotificationsIcon />
+					</Badge>
+				</IconButton>
 
 				<UserMenu />
 			</Toolbar>

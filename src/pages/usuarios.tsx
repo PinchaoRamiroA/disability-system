@@ -95,7 +95,7 @@ export default function UsuariosPage() {
 
 	const handleEditClick = (user: AuthUser) => {
 		setSelectedUser(user)
-		setNewRole(user.rol?.id_rol || '')
+		setNewRole(user.rol?.id as number | '')
 		setEditDialogOpen(true)
 	}
 

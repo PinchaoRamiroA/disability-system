@@ -12,21 +12,30 @@ import {
 	Tab,
 	Divider,
 	IconButton,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	TextField,
+	MenuItem,
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import EditIcon from '@mui/icons-material/Edit'
-
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import {
 	getIncapacidadById,
 	getIncapacidadHistorial,
 	getIncapacidadDocumentos,
 	getIncapacidadPlazos,
+	changeIncapacidadEstado,
+	getEstadosIncapacidad,
 } from '@/services/api/incapacidades'
 import {
 	Incapacidad,
 	HistorialIncapacidad,
 	Documento,
 	PlazosIncapacidad,
+	EstadoIncapacidad,
 } from '@/types/api'
 import { usePermission } from '@/hooks/usePermission'
 import useNotifier from '@/hooks/useNotifier'
@@ -73,6 +82,11 @@ export default function IncapacidadDetailPage() {
 	const [plazos, setPlazos] = useState<PlazosIncapacidad | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [tabValue, setTabValue] = useState(0)
+	const [estados, setEstados] = useState<EstadoIncapacidad[]>([])
+	const [estadoDialogOpen, setEstadoDialogOpen] = useState(false)
+	const [newEstado, setNewEstado] = useState('')
+	const [observacionesEstado, setObservacionesEstado] = useState('')
+	const [changingEstado, setChangingEstado] = useState(false)
 
 	const canEdit = hasPermission('editar_incapacidad')
 	const canViewHistory = hasPermission('consultar_historial')
@@ -86,13 +100,14 @@ export default function IncapacidadDetailPage() {
 const loadIncapacidadData = async () => {
 		setLoading(true)
 		try {
-			const [incRes, histRes, docsRes, plazosRes] = await Promise.all([
+			const [incRes, histRes, docsRes, plazosRes, estadosRes] = await Promise.all([
 				getIncapacidadById(Number(id)),
 				canViewHistory
 					? getIncapacidadHistorial(Number(id)).catch(() => null)
 					: Promise.resolve(null),
 				getIncapacidadDocumentos(Number(id)),
 				getIncapacidadPlazos(Number(id)).catch(() => null),
+				getEstadosIncapacidad().catch(() => null),
 			])
 
 			setIncapacidad(incRes.data.data)
@@ -103,10 +118,46 @@ const loadIncapacidadData = async () => {
 			const docsData = docsRes?.data?.data
 			setDocumentos(docsData?.items || [])
 			setPlazos(plazosRes?.data?.data || null)
+			setEstados(estadosRes?.data?.data || [])
 		} catch (error) {
 			enqueueSnackbar('Error al cargar incapacidad', { variant: 'error' })
 		} finally {
 			setLoading(false)
+		}
+	}
+
+	const handleOpenEstadoDialog = () => {
+		setNewEstado('')
+		setObservacionesEstado('')
+		setEstadoDialogOpen(true)
+	}
+
+	const handleCloseEstadoDialog = () => {
+		setEstadoDialogOpen(false)
+	}
+
+	const handleChangeEstado = async () => {
+		if (!newEstado) return
+		setChangingEstado(true)
+		try {
+			const currentEstadoId = incapacidad?.estado?.id_estado
+			const estadoActual = estados.find(e => e.id_estado === currentEstadoId)
+			const nuevoEstado = estados.find(e => e.id_estado === Number(newEstado))
+
+			await changeIncapacidadEstado(Number(id), {
+				id_estado: Number(newEstado),
+				observaciones: observacionesEstado || undefined,
+			})
+
+			setEstadoDialogOpen(false)
+			await loadIncapacidadData()
+			enqueueSnackbar(`Estado cambiado a "${nuevoEstado?.nombre || newEstado}"`, {
+				variant: 'success',
+			})
+		} catch (error) {
+			enqueueSnackbar('Error al cambiar estado', { variant: 'error' })
+		} finally {
+			setChangingEstado(false)
 		}
 	}
 
@@ -142,17 +193,26 @@ const loadIncapacidadData = async () => {
 				>
 					Volver
 				</Button>
-				{canEdit && (
-					<Button
-						startIcon={<EditIcon />}
-						variant="outlined"
-						onClick={() =>
-							router.push(`/incapacidades/${id}/editar`)
-						}
-					>
-						Editar
-					</Button>
-				)}
+				<Box sx={{ display: 'flex', gap: 1 }}>
+					{canEdit && (
+						<>
+							<Button
+								startIcon={<SwapHorizIcon />}
+								variant="outlined"
+								onClick={handleOpenEstadoDialog}
+							>
+								Cambiar Estado
+							</Button>
+							<Button
+								startIcon={<EditIcon />}
+								variant="outlined"
+								onClick={() => router.push(`/incapacidades/${id}/editar`)}
+							>
+								Editar
+							</Button>
+						</>
+					)}
+				</Box>
 			</Box>
 
 			<Card sx={{ mb: 3 }}>
@@ -432,6 +492,56 @@ const loadIncapacidadData = async () => {
 					</TabPanel>
 				</CardContent>
 			</Card>
+
+			<Dialog
+				open={estadoDialogOpen}
+				onClose={handleCloseEstadoDialog}
+				maxWidth="sm"
+				fullWidth
+			>
+				<DialogTitle>Cambiar Estado de Incapacidad</DialogTitle>
+				<DialogContent>
+					<Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+						<TextField
+							select
+							label="Nuevo Estado"
+							value={newEstado}
+							onChange={(e) => setNewEstado(e.target.value)}
+							fullWidth
+						>
+							{estados
+								.filter((e) => e.id_estado !== incapacidad?.estado?.id_estado)
+								.map((estado) => (
+									<MenuItem
+										key={estado.id_estado}
+										value={estado.id_estado}
+									>
+										{estado.nombre}
+									</MenuItem>
+								))}
+						</TextField>
+						<TextField
+							label="Observaciones (opcional)"
+							multiline
+							rows={3}
+							value={observacionesEstado}
+							onChange={(e) => setObservacionesEstado(e.target.value)}
+							fullWidth
+							placeholder="Registre una razón o nota sobre el cambio de estado"
+						/>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseEstadoDialog}>Cancelar</Button>
+					<Button
+						variant="contained"
+						onClick={handleChangeEstado}
+						disabled={!newEstado || changingEstado}
+					>
+						{changingEstado ? 'Guardando...' : 'Confirmar'}
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</PageLayout>
 	)
 }

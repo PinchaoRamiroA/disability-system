@@ -16,7 +16,7 @@ const menuItems: MenuItem[] = [
 	{ path: 'seguimiento', label: 'Seguimiento y Cobro', permiso: 'gestionar_cobro_persuasivo' },
 	{ path: 'pagos', label: 'Pagos', permiso: 'registrar_pago' },
 	{ path: 'conciliacion', label: 'Conciliación', permiso: 'realizar_conciliacion' },
-	{ path: 'alertas', label: 'Alertas', permiso: 'generar_alertas' },
+	{ path: 'alertas', label: 'Alertas', permiso: 'consultar_incapacidad' },
 	{ path: 'reportes', label: 'Reportes', permiso: 'consultar_reportes' },
 	{ path: 'usuarios', label: 'Usuarios', permiso: 'gestionar_usuarios' },
 	{ path: 'configuracion', label: 'Configuración', permiso: 'gestionar_usuarios' },

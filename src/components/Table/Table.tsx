@@ -9,19 +9,19 @@ import Paper from '@mui/material/Paper'
 import Pagination from '@mui/material/Pagination'
 import Box from '@mui/material/Box'
 
-interface Column {
+interface Column<T = unknown> {
 	id: string
 	label: string
 	width?: number
 	minWidth?: number
-	render?: (row: unknown) => React.ReactNode
+	render?: (row: T) => React.ReactNode
 }
 
-interface TableProps {
-	columns: Column[]
-	data: unknown[]
+interface TableProps<T = unknown> {
+	columns: Column<T>[]
+	data: T[]
 	loading?: boolean
-	onRowClick?: (row: unknown) => void
+	onRowClick?: (row: T) => void
 	emptyMessage?: string
 	pagination?: {
 		page: number
@@ -30,14 +30,14 @@ interface TableProps {
 	}
 }
 
-export function Table({
+export function Table<T = unknown>({
 	columns,
 	data,
 	loading = false,
 	onRowClick,
 	emptyMessage = 'No hay datos',
 	pagination,
-}: TableProps) {
+}: TableProps<T>) {
 	const isEmpty = data.length === 0
 
 	const headers = columns.map((col) => ({

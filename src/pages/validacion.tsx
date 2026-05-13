@@ -27,6 +27,7 @@ import { usePermission } from '@/hooks/usePermission'
 import useNotifier from '@/hooks/useNotifier'
 import { PageLayout } from '@/components/layouts/PageLayout'
 import { DocumentChecklist } from '@/components/DocumentChecklist'
+import { Table } from '@/components/Table'
 import dayjs from 'dayjs'
 
 export default function ValidacionDocumentalPage() {

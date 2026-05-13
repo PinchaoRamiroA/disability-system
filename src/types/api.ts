@@ -156,6 +156,7 @@ export interface IncapacidadFilters {
 	id_entidad?: number
 	origen?: OrigenIncapacidad
 	canal_recepcion?: CanalRecepcion
+	search?: string
 	page?: number
 	limit?: number
 }

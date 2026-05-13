@@ -28,6 +28,7 @@ export const getIncapacidades = async (
 	if (filters.origen) params.append('origen', filters.origen)
 	if (filters.canal_recepcion)
 		params.append('canal_recepcion', filters.canal_recepcion)
+	if (filters.search) params.append('search', filters.search)
 	if (filters.page) params.append('page', filters.page.toString())
 	if (filters.limit) params.append('limit', filters.limit.toString())
 

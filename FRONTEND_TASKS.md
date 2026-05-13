@@ -64,13 +64,13 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 - [x] 2.3.3 Header con semáforo de estado y días transcurridos
 - [x] 2.3.4 Integrar GET /incapacidades/{id}
 - [x] 2.3.5 Mostrar entidad, tipo, fechas, observaciones
-- [ ] 2.3.6 Timeline stepper para estados (recibida → validada → transcrita → cobrada → pagada)
+- [ ] 2.3.6 Timeline stepper para estados (ver los estados en la docs)
 
 #### 2.4 Cambiar Estado
-- [ ] 2.4.1 Integrar PATCH /incapacidades/{id}/estado
-- [ ] 2.4.2 Mostrar modal de confirmación
-- [ ] 2.4.3 Registrar observaciones del cambio
-- [ ] 2.4.4 Actualizar UI después del cambio
+- [x] 2.4.1 Integrar PATCH /incapacidades/{id}/estado
+- [x] 2.4.2 Mostrar modal de confirmación
+- [x] 2.4.3 Registrar observaciones del cambio
+- [x] 2.4.4 Actualizar UI después del cambio
 
 ---
 
@@ -123,7 +123,7 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 - [x] 5.1.2 Integrar GET /cobros/seguimientos
 - [x] 5.1.3 Integrar POST /cobros/seguimientos (registrar seguimiento)
 - [ ] 5.1.4 Timeline de seguimientos (llamadas, correos, respuestas)
-- [ ] 5.1.5 Tipos de seguimiento (persuasivo, coercitivo, jurídico)
+- [ ] 5.1.5 Tipos de seguimiento (ver en docs)
 
 #### 5.2 Cobro Jurídico
 - [x] 5.2.1 Crear página cobro jurídico
@@ -173,16 +173,16 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 ### 🟠 PRIORIDAD 8 - ALERTAS Y NOTIFICACIONES (Semana 5)
 
 #### 8.1 Centro de Alertas
-- [ ] 8.1.1 Crear página /alertas
-- [ ] 8.1.2 Tipos: documentos faltantes, pago vencido, transcripción próxima, >90 días
-- [ ] 8.1.3 Cards tipo Trello con prioridades (🔴 alta, 🟡 media, 🟢 baja)
-- [ ] 8.1.4 Integrar GET /cartera/alertas-vencimiento
+- [x] 8.1.1 Crear página /alertas
+- [x] 8.1.2 Tipos: documentos faltantes, pago vencido, transcripción próxima, >90 días
+- [x] 8.1.3 Cards tipo Trello con prioridades (🔴 alta, 🟡 media, 🟢 baja)
+- [x] 8.1.4 Integrar GET /cartera/alertas-vencimiento
 
 #### 8.2 Notificaciones
-- [ ] 8.2.1 Integrar GET /notificaciones
-- [ ] 8.2.2 Badge en header con count de no leídas
-- [ ] 8.2.3 PATCH /notificaciones/{id}/leida
-- [ ] 8.2.4 PATCH /notificaciones/marcar-todas-leidas
+- [x] 8.2.1 Integrar GET /notificaciones
+- [x] 8.2.2 Badge en header con count de no leídas
+- [x] 8.2.3 PATCH /notificaciones/{id}/leida
+- [x] 8.2.4 PATCH /notificaciones/marcar-todas-leidas
 
 ---
 
