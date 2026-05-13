@@ -1,14 +1,43 @@
 import * as React from 'react'
-import { Html, Head, Main, NextScript } from 'next/document'
+import Document, {
+	Html,
+	Head,
+	Main,
+	NextScript,
+	DocumentContext,
+	DocumentInitialProps,
+} from 'next/document'
 
-export default function Document() {
-	return (
-		<Html lang="es">
-			<Head />
-			<body>
-				<Main />
-				<NextScript />
-			</body>
-		</Html>
-	)
+import {
+	DocumentHeadTags,
+	documentGetInitialProps,
+} from '@mui/material-nextjs/v16-pagesRouter'
+
+interface MyDocumentProps extends DocumentInitialProps {
+	emotionStyleTags: React.ReactElement[]
+}
+
+export default class MyDocument extends Document<MyDocumentProps> {
+	render() {
+		return (
+			<Html lang="es">
+				<Head>
+					<DocumentHeadTags {...this.props} />
+				</Head>
+
+				<body>
+					<Main />
+					<NextScript />
+				</body>
+			</Html>
+		)
+	}
+}
+
+MyDocument.getInitialProps = async (
+	ctx: DocumentContext
+): Promise<MyDocumentProps> => {
+	const finalProps = await documentGetInitialProps(ctx)
+
+	return finalProps as MyDocumentProps
 }

@@ -1,7 +1,9 @@
 // import { Background, Content, CustomizedGrid, Form, Logo } from './styles'
 import React from 'react'
 import useNotifier from '@/hooks/useNotifier'
-import { CssBaseline, Paper, Grid } from '@mui/material'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import CssBaseline from '@mui/material/CssBaseline'
 import Image from 'next/image'
 
 interface Props {
@@ -49,6 +51,11 @@ export const Login = ({ children }: Props) => {
 						alt="Logo de evalsoft"
 						width={180}
 						height={120}
+						priority
+						style={{
+							width: 'auto',
+							height: 'auto',
+						}}
 					/>
 				</Grid>
 

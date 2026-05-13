@@ -20,12 +20,12 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 
 #### 1.1 Configuración del Proyecto
 - [x] 1.1.1 Limpiar código innecesario del proyecto anterior (comentarios, componentes no usados)
-- [ ] 1.1.2 Actualizar variables de entorno (.env) con VITE_API_URL del AGENTS.md
-- [ ] 1.1.3 Configurar baseURL en axios instance para API v1
+- [x] 1.1.2 Actualizar variables de entorno (.env) con API_URL
+- [x] 1.1.3 Configurar baseURL en axios instance para API v1
 - [x] 1.1.4 Ajustar tsconfig paths si es necesario
 
 #### 1.2 Autenticación (Adaptar existente)
-- [] 1.2.1 Crear tipos TypeScript para Auth (Token, User, Credentials) según AGENTS.md
+- [x] 1.2.1 Crear tipos TypeScript para Auth (Token, User, Credentials) según AGENTS.md
 - [] 1.2.2 Adaptar servicio de authentication (login, register, refresh)
 - [] 1.2.3 Adaptar slice Redux de autenticación para JWT tokens
 - [ ] 1.2.4 Crear hook useAuth para manejo de sesión
