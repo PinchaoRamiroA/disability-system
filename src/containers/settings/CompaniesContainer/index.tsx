@@ -1,1 +1,0 @@
-export { CompaniesContainer } from './CompaniesContainer'

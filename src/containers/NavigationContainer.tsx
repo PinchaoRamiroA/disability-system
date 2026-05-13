@@ -4,8 +4,6 @@ import { Drawer } from '@/components/Drawer'
 import { Main } from '@/components/Main'
 import LoadingBar from 'react-redux-loading-bar'
 import Box from '@mui/material/Box'
-import { useTheme } from '@mui/material'
-import { Theme } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '@/hooks/useReduxHooks'
 import { setOpen, drawerSelector } from '@/store/slices/drawer'
 
@@ -17,7 +15,6 @@ export const NavigationContainer = ({
 	const dispatch = useAppDispatch()
 	const { open, drawerWidth } = useAppSelector(drawerSelector)
 
-	const theme: Theme = useTheme()
 	const handleDrawerToggle = () => {
 		dispatch(setOpen({ open: !open }))
 	}
@@ -33,7 +30,6 @@ export const NavigationContainer = ({
 		}
 	}, [dispatch])
 
-	// Guardar estado del Drawer en localStorage cada vez que se abre/cierra
 	useEffect(() => {
 		localStorage.setItem('drawerState', JSON.stringify(open))
 	}, [open])
@@ -42,12 +38,12 @@ export const NavigationContainer = ({
 		<>
 			<Box
 				sx={{
-					zIndex: (_theme) => ({ sm: _theme.zIndex.drawer + 2 }),
+					zIndex: (_theme) => ({ sm: (_theme as { zIndex: { drawer: number } }).zIndex.drawer + 2 }),
 					width: '100%',
 					position: 'absolute',
 				}}
 			>
-				<LoadingBar style={{ backgroundColor: theme.status.main }} />
+				<LoadingBar />
 			</Box>
 			<Appbar handleDrawerToggle={handleDrawerToggle} />
 			<Drawer

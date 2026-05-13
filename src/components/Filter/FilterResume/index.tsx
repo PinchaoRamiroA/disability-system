@@ -1,1 +1,0 @@
-export { FilterResume } from './FilterResume'

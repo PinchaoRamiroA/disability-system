@@ -1,1 +1,0 @@
-export { ReporteTipificacionContainer } from './ReporteTipificacionContainer'

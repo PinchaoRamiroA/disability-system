@@ -1,1 +1,0 @@
-export { EventsReview } from './EventsReview'

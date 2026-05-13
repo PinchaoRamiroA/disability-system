@@ -1,1 +1,0 @@
-export { CompanyReview } from './CompanyReview'

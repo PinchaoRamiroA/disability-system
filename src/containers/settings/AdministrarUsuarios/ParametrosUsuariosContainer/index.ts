@@ -1,1 +1,0 @@
-export { ParametrosUsuariosContainer } from './ParametrosUsuariosContainer'

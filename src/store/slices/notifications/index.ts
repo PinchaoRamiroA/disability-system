@@ -1,5 +1,0 @@
-export * from './actions'
-export * from './eventsReducer'
-export * from './reducer'
-export * from './typesReducer'
-export * from './reducerConfigNotification'

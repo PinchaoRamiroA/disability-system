@@ -51,6 +51,7 @@ export const SearchInput = <T extends GenericObject>({
 	}, [listElements, value])
 
 	// Reaplica el filtro cada vez que la bandera esté activa
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		if (flag) {
 			executeSearchCallback(value)

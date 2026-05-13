@@ -1,1 +1,0 @@
-export { LocationsFilter } from './LocationsFilter'

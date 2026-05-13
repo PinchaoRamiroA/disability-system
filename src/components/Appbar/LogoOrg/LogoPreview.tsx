@@ -18,7 +18,7 @@ export const LogoPreview = ({
 				backgroundSize: 'contain',
 				backgroundRepeat: 'no-repeat',
 				backgroundPosition: 'center',
-				backgroundImage: `url(/images/logo-horizontal.jpg)`,
+				backgroundImage: 'url(/images/logo-horizontal.jpg)',
 				borderRadius: borderRadius ? '50%' : 'none',
 			}}
 		/>

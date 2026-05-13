@@ -1,4 +1,4 @@
-import { styled } from '@mui/system'
+import { styled } from '@mui/material/styles'
 
 export const Background = styled('div')`
   grid-row: 1/3;

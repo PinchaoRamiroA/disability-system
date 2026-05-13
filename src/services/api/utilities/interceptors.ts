@@ -1,57 +1,31 @@
 import {
 	AxiosError,
 	AxiosInstance,
-	AxiosRequestConfig,
 	AxiosResponse,
+	InternalAxiosRequestConfig,
 } from 'axios'
-import {
-	ACCESS_TOKEN_NAME,
-	REFRESH_TOKEN_NAME,
-} from '@/utils/constants/userSession'
 import { refreshToken } from '../authentication'
-import { autoLogOut, cleanLocalStorage } from '@/utils/helpers/autoLogOut'
 import { saveAuthToken } from '@/utils/helpers/accessToken'
-import store from '@/store/index'
-import { clearDispatchActions } from '@/store/slices/authentication'
-import { AnyAction } from '@reduxjs/toolkit'
+
+const ACCESS_TOKEN_NAME = 'access_token'
+const REFRESH_TOKEN_NAME = 'refresh_token'
 
 let isRefreshTokenFetching = false
 
-const requireAuth = (config: AxiosRequestConfig): AxiosRequestConfig => {
-	if (config.headers === undefined) {
-		config.headers = {}
-	}
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem(
-		ACCESS_TOKEN_NAME
-	)}`
-
+const requireAuth = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+	config.headers.set('Authorization', `Bearer ${localStorage.getItem(ACCESS_TOKEN_NAME)}`)
 	return config
 }
 
-const requireRefresh = (config: AxiosRequestConfig): AxiosRequestConfig => {
-	if (config.headers === undefined) {
-		config.headers = {}
-	}
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem(
-		REFRESH_TOKEN_NAME
-	)}`
-
-	return config
-}
-
-const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
-	// console.info(`[request] [${JSON.stringify(config)}]`)
+const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
 	return config
 }
 
 const onRequestError = (error: AxiosError): Promise<AxiosError> => {
-	// console.log('ERRER', error.config)
-	// console.error(`[request error] [${JSON.stringify(error)}]`)
 	return Promise.reject(error)
 }
 
 const onResponse = (response: AxiosResponse): AxiosResponse => {
-	// console.info(`[response] [${JSON.stringify(response)}]`)
 	return response
 }
 
@@ -64,11 +38,8 @@ export function setupLoggingInterceptorsTo(
 		async (err: AxiosError) => {
 			const originalConfig = err.config
 
-			// console.log('CHECKING RESPONSE STATUS', err.response?.status)
-
-			if (originalConfig.url !== '/api/auth' && err.response) {
+			if (originalConfig?.url !== '/api/auth' && err.response) {
 				if (err.response.status === 401) {
-					// console.log('REFRESH TOKEN')
 					if (!isRefreshTokenFetching) {
 						isRefreshTokenFetching = true
 
@@ -76,26 +47,11 @@ export function setupLoggingInterceptorsTo(
 							.then(saveAuthToken)
 							.then(() => {
 								isRefreshTokenFetching = false
-
-								// Despachar actions y ejecutar callbacks guardados antes del refresco
-								const { actions, callbacks } =
-									store.getState().redispatch
-
-								actions.forEach((action) =>
-									store.dispatch(action as AnyAction)
-								)
-								callbacks.forEach((callback) => callback())
-
-								// Limpiar state de actions y callbacks
-								store.dispatch(clearDispatchActions())
-
-								// Reiniciar cierre automático
-								autoLogOut()
 							})
 							.catch(() => {
-								// console.log('ERROR, REDIRIGIR A LOGIN')
-								cleanLocalStorage()
-								window.location.href = window.location.origin
+								localStorage.removeItem(ACCESS_TOKEN_NAME)
+								localStorage.removeItem(REFRESH_TOKEN_NAME)
+								window.location.href = '/login'
 								return
 							})
 					}
@@ -112,7 +68,13 @@ export function setupAuthInterceptorTo(
 	refresh: boolean
 ): AxiosInstance {
 	if (refresh) {
-		axiosInstance.interceptors.request.use(requireRefresh, onRequestError)
+		axiosInstance.interceptors.request.use(
+			(config: InternalAxiosRequestConfig) => {
+				config.headers.set('Authorization', `Bearer ${localStorage.getItem(REFRESH_TOKEN_NAME)}`)
+				return config
+			},
+			onRequestError
+		)
 	} else {
 		axiosInstance.interceptors.request.use(requireAuth, onRequestError)
 	}

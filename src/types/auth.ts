@@ -1,10 +1,19 @@
-import { Status } from './status'
+import {
+	AuthUser,
+	LoginRequest,
+	LoginData,
+	TokenPayload,
+} from './api'
 
 export type Auth = {
-	user: User
-	authenticated?: boolean
-	status?: Status
-	authType?: AuthType
+	id?: number
+	email: string
+	nombre: string
+	role: string
+	numero_celular?: string
+	direccion?: string
+	numero_documento?: string
+	estado?: boolean
 }
 
 export type ChangePassFlag = {
@@ -15,32 +24,13 @@ export type ChangePassValue = {
 	changePassword: 'idle' | 'true' | 'false'
 }
 
-export type LDAPLogin = boolean
-
-export type StatusAdviser = 'Activo' | 'Inactivo' | 'Pausa'
-
 export type User = {
-	company: number
 	email: string
-	exp: number
-	nameCompany?: string
-	role: number
-	schema?: string
-	sub?: string
-	statusAdviser?: StatusAdviser
+	nombre: string
+	role: string
 }
 
-export type Credentials = {
-	email: string
-	password: string
-	userAgentData: string
-	ip: string
-}
-
-export interface AuthParams {
-	credentials: Credentials
-	setUserLocked: (value: boolean) => void
-}
+export type Credentials = LoginRequest
 
 export type LDAPCredentials = {
 	code: string
@@ -48,13 +38,24 @@ export type LDAPCredentials = {
 	session_state: string
 }
 
-export type Token = {
-	token: string
-	refreshToken?: string
-}
+export type Token = TokenPayload
+export type LoginToken = LoginData
 
-export type AuthType = 'username/passowrd' | 'ldap'
+export type AuthType = 'username/password' | 'ldap'
 
-export type IdOrgParam = {
-	idOrg: number | undefined
+export const normalizeAuthUser = (user: Auth | AuthUser): Auth => {
+	if ('correo' in user) {
+		return {
+			id: user.id,
+			email: user.correo,
+			nombre: user.nombre,
+			role: user.rol.nombre,
+			numero_celular: user.numero_celular,
+			direccion: user.direccion,
+			numero_documento: user.numero_documento,
+			estado: user.estado,
+		}
+	}
+
+	return user
 }

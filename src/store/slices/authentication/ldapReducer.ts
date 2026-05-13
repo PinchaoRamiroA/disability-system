@@ -1,8 +1,6 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit'
-import { LDAPLogin } from '@/types/auth'
-import { AppState } from '../..'
+import { createSlice } from '@reduxjs/toolkit'
 
-const initialState: LDAPLogin = false
+const initialState = false
 
 export const ldapSlice = createSlice({
 	initialState,
@@ -14,9 +12,4 @@ export const ldapSlice = createSlice({
 })
 
 export const { disableLDAP, enableLDAP } = ldapSlice.actions
-
-export const selectLdap = (state: AppState) => state.ldap
-
-export const ldapSelector = createSelector(selectLdap, (state) => state)
-
 export const ldapReducer = ldapSlice.reducer

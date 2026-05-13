@@ -10,13 +10,13 @@ import {
 	Typography,
 } from '@mui/material'
 import { ChartWrapper } from './ChartWrapper'
-import { ChildrenType } from '@/types/Children'
+
 import { Info } from '@mui/icons-material'
 
 type Props = {
-	chartTitle: string
+	chartTitle: string	
 	dataLength: number
-	children: ChildrenType
+	children: React.ReactNode
 	loading?: boolean
 	styles?: SxProps
 	tooltip?: string

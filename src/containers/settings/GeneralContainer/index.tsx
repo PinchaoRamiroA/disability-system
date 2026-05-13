@@ -1,1 +1,0 @@
-export { GeneralContainer } from './GeneralContainer'

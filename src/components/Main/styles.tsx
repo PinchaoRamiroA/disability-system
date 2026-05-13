@@ -1,5 +1,4 @@
-import { styled } from '@mui/system'
-import { Theme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 
 export const MainWrapper = styled('main')`
 	height: 100vh;
@@ -11,7 +10,6 @@ export const SectionWrapper = styled('section', {
 })<{
 	open: boolean
 	drawerwidth: number
-	theme?: Theme
 }>(({ theme, open, drawerwidth }) => ({
 	// backgroundColor: theme.palette.background.paper,
 	flexGrow: 1,
@@ -34,6 +32,6 @@ export const SectionWrapper = styled('section', {
 	},
 }))
 
-export const TopMargin = styled('div')<{ theme?: Theme }>(({ theme }) => ({
+export const TopMargin = styled('div')(({ theme }) => ({
 	...theme.mixins.toolbar,
 }))

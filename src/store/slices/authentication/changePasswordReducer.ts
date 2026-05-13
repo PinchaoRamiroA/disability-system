@@ -1,25 +1,19 @@
-import { createReducer, PayloadAction } from '@reduxjs/toolkit'
+import { createReducer } from '@reduxjs/toolkit'
 import { checkChangePassword } from './actions'
-import { ChangePassValue } from '@/types/auth'
 
-const initialState: ChangePassValue = {
+interface ChangePasswordState {
+	changePassword: 'idle' | 'true' | 'false'
+}
+
+const initialState: ChangePasswordState = {
 	changePassword: 'idle',
 }
 
 export const changePasswordReducer = createReducer(initialState, (builder) => {
 	builder
-		.addCase(checkChangePassword.rejected, () => {
-			return initialState
+		.addCase(checkChangePassword.rejected, () => initialState)
+		.addCase(checkChangePassword.pending, () => initialState)
+		.addCase(checkChangePassword.fulfilled, (state, action) => {
+			state.changePassword = action.payload ? 'true' : 'false'
 		})
-		.addCase(checkChangePassword.pending, () => {
-			return initialState
-		})
-		.addCase(
-			checkChangePassword.fulfilled,
-			(_, action: PayloadAction<ChangePassValue>) => {
-				return {
-					...action.payload,
-				}
-			}
-		)
 })

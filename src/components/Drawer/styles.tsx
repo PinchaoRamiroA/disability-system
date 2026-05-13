@@ -1,9 +1,7 @@
-import { styled } from '@mui/system'
+import { styled, alpha } from '@mui/material/styles'
 import ListItemButton from '@mui/material/ListItemButton'
-import { Theme } from '@mui/material/styles'
-import { alpha } from '@mui/material'
 
-export const CustomListItemButton = styled(ListItemButton)<{ theme?: Theme }>(
+export const CustomListItemButton = styled(ListItemButton)(
 	({ theme }) => ({
 		borderRadius: theme.shape.borderRadius,
 		marginLeft: theme.spacing(1),

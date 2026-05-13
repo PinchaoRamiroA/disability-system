@@ -1,13 +1,8 @@
 import React, { Component, ErrorInfo } from 'react'
 import { Button, Card, CardContent, Typography } from '@mui/material'
-import { useCompanyAndIdVa } from '@/hooks/useCompanyAndIdVa'
-import { useAppDispatch } from '@/hooks/useReduxHooks'
-import { saveLog } from '@/store/slices/web-chat-human-agent'
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode
-	idOrg: number
-	dispatch: ReturnType<typeof useAppDispatch>
 }
 
 interface ErrorBoundaryState {
@@ -25,36 +20,10 @@ class ErrorBoundaryClass extends Component<
 		return { hasError: true }
 	}
 
-	componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-		const { idOrg, dispatch } = this.props
-
-		const detail = {
-			error: {
-				message: error.message,
-				name: error.name,
-				cause: error.cause,
-				stack: error.stack,
-			},
-			errorInfo: {
-				componentStack: errorInfo?.componentStack ?? '',
-			},
-		}
-
+	componentDidCatch(error: Error, _errorInfo: ErrorInfo) {
 		this.setState({
-			errorMessage: `${detail.error.name} - ${detail.error.message}`,
+			errorMessage: `${error.name} - ${error.message}`,
 		})
-
-		dispatch(
-			saveLog({
-				idOrg,
-				payload: {
-					callback: 'errorBoundary',
-					detail: JSON.stringify(detail),
-					idadviser: 0,
-					application: 'Dashboard',
-				},
-			})
-		)
 	}
 
 	render() {
@@ -96,14 +65,7 @@ class ErrorBoundaryClass extends Component<
 }
 
 const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
-	const { idOrg } = useCompanyAndIdVa()
-	const dispatch = useAppDispatch()
-
-	return (
-		<ErrorBoundaryClass idOrg={idOrg} dispatch={dispatch}>
-			{children}
-		</ErrorBoundaryClass>
-	)
+	return <ErrorBoundaryClass>{children}</ErrorBoundaryClass>
 }
 
 export default ErrorBoundary

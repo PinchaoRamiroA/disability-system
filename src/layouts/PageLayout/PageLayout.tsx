@@ -1,12 +1,12 @@
 import React from 'react'
 import { PageTitle, Header } from './styles'
-import { ChildrenType } from '@/types/Children'
+
 
 export const PageLayout = ({
   children,
   title,
 }: {
-  children: ChildrenType
+  children: React.ReactNode
   title: string
 }) => {
   return (

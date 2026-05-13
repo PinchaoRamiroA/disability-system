@@ -1,1 +1,0 @@
-export { WebChatHeader } from './WebChatHeader'

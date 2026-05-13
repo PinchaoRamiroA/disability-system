@@ -1,10 +1,19 @@
-import { LoadingContext } from '@/contexts/LoadingContext'
-import { useContext } from 'react'
+import { useState, useCallback } from 'react'
 
 export const useLoading = () => {
-	const context = useContext(LoadingContext)
-	if (!context) {
-		throw new Error('useLoading must be used within a LoadingProvider')
+	const [loading, setLoading] = useState(false)
+
+	const startLoading = useCallback(() => {
+		setLoading(true)
+	}, [])
+
+	const stopLoading = useCallback(() => {
+		setLoading(false)
+	}, [])
+
+	return {
+		loading,
+		startLoading,
+		stopLoading,
 	}
-	return context
 }

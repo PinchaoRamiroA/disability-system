@@ -6,32 +6,25 @@ import {
 import {
 	ChangePassFlag,
 	Credentials,
-	LDAPCredentials,
-	Token,
 } from '@/types/auth'
+import { LoginResponse, RefreshTokenResponse } from '@/types/api'
+import { getRefreshToken } from '@/utils/helpers/accessToken'
 
 export async function login(credentials: Credentials) {
-	const response = await orchestratorClient.post<Token>(
-		'/api/auth',
+	const response = await orchestratorClient.post<LoginResponse>(
+		'/auth/login',
 		credentials
 	)
-	return response.data
-}
-
-export async function loginLDAP(credentials: LDAPCredentials) {
-	const response = await orchestratorClient.post<Token>(
-		'/api/auth/auth_ldap',
-		credentials
-	)
-	return response.data
+	return response.data.data
 }
 
 export async function refreshToken() {
-	const response = await orchestratorClientRefresh.post<Token>(
-		'api/auth/refreshSesion'
+	const response = await orchestratorClientRefresh.post<RefreshTokenResponse>(
+		'/auth/refresh',
+		{ refresh_token: getRefreshToken() || '' }
 	)
 
-	return response.data
+	return response.data.data
 }
 
 export async function checkChangePasswordAPI() {

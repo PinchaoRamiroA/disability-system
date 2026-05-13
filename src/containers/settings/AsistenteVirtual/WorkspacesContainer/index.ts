@@ -1,1 +1,0 @@
-export { WorkspacesContainer } from './WorkspacesContainer'

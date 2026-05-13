@@ -1,45 +1,44 @@
-import { createReducer, PayloadAction } from '@reduxjs/toolkit'
-import { logout, loginAsync, login } from './actions'
-import { Auth } from '@/types/auth'
+import { createReducer } from '@reduxjs/toolkit'
+import { thunkLogin, thunkLogout, retrieveLogin } from './actions'
 
-const initialState: Auth = {
-	user: {
-		company: 0,
-		email: '',
-		nameCompany: '',
-		role: 0,
-		sub: '',
-		exp: 0,
-	},
+export interface AuthState {
+	authenticated: boolean
+	email: string | null
+	nombre: string | null
+	role: string | null
+	status: 'idle' | 'pending' | 'succeeded' | 'failed'
+}
+
+const initialState: AuthState = {
 	authenticated: false,
+	email: null,
+	nombre: null,
+	role: null,
 	status: 'idle',
-	authType: 'username/passowrd',
 }
 
 export const authReducer = createReducer(initialState, (builder) => {
 	builder
-		// .addCase(login, (_state, action: PayloadAction<Auth>) => action.payload)
-		.addCase(logout, () => initialState)
-		.addCase(login, (state, action: PayloadAction<Auth>) => {
-			return {
-				...action.payload,
-				authenticated: true,
-				authType: state.authType,
-				status: 'idle',
-			}
-		})
-		.addCase(loginAsync.pending, (state) => {
+		.addCase(thunkLogin.pending, (state) => {
 			state.status = 'pending'
 		})
-		.addCase(loginAsync.fulfilled, (state, action: PayloadAction<Auth>) => {
-			return {
-				...action.payload,
-				authenticated: true,
-				authType: state.authType,
-				status: 'resolved',
-			}
+		.addCase(thunkLogin.fulfilled, (state, action) => {
+			state.authenticated = true
+			state.email = action.payload.email
+			state.nombre = action.payload.nombre
+			state.role = action.payload.role
+			state.status = 'succeeded'
 		})
-		.addCase(loginAsync.rejected, (state) => {
-			state.status = 'rejected'
+		.addCase(thunkLogin.rejected, (state) => {
+			state.status = 'failed'
+		})
+		.addCase(thunkLogout.fulfilled, () => initialState)
+		.addCase(retrieveLogin.fulfilled, (state, action) => {
+			if (action.payload) {
+				state.authenticated = true
+				state.email = action.payload.email
+				state.nombre = action.payload.nombre
+				state.role = action.payload.role
+			}
 		})
 })

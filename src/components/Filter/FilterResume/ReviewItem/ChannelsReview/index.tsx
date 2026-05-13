@@ -1,1 +1,0 @@
-export { ChannelsReview } from './ChannelsReview'

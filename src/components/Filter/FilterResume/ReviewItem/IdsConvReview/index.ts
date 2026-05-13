@@ -1,1 +1,0 @@
-export { IdsConvReview } from './IdsConvReview'

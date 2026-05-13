@@ -1,1 +1,0 @@
-export { SplitsContainer } from './SplitsContainer'

@@ -2,11 +2,10 @@
 import React from 'react'
 import useNotifier from '@/hooks/useNotifier'
 import { CssBaseline, Paper, Grid } from '@mui/material'
-import { ChildrenType } from '@/types/Children'
 import Image from 'next/image'
 
 interface Props {
-	children: ChildrenType
+	children: React.ReactNode
 }
 
 export const Login = ({ children }: Props) => {

@@ -5,14 +5,14 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import { useTheme } from '@mui/material/styles'
 import { Button, DialogActions, useMediaQuery } from '@mui/material'
-import { ChildrenType } from '@/types/Children'
+
 
 interface Props {
 	open: boolean
 	onClose?: () => void
-	description?: ChildrenType
+	description?: React.ReactNode
 	title: string
-	children?: ChildrenType
+	children?: React.ReactNode
 	actions?: boolean
 	closeButtonText?: string
 	confirmButtonText?: string

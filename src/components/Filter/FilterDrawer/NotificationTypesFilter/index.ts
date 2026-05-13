@@ -1,1 +1,0 @@
-export { NotificationTypesFilter } from './NotificationTypesFilter'

@@ -1,1 +1,0 @@
-export { IntegrationServiceReview } from './IntegrationServiceReview'

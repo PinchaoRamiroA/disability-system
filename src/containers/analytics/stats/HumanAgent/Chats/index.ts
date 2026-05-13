@@ -1,1 +1,0 @@
-export { ChatsContainer } from './ChatsContainer'

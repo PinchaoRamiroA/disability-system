@@ -1,1 +1,0 @@
-export { CausalesReview } from './CausalesReview'

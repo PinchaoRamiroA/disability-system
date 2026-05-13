@@ -1,1 +1,0 @@
-export { SplitsForm } from './SplitsForm'

@@ -1,1 +1,0 @@
-export { ChannelIcon } from './ChannelIcon'

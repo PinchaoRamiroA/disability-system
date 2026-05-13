@@ -23,7 +23,8 @@ const store = makeStore()
 /**
  * Infer the `AppState` type from the store itself
  */
-export type AppState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>
+export type AppState = RootState
 
 /**
  * Infer the `AppDispatch` type from the store itself

@@ -1,65 +1,66 @@
 import * as React from 'react'
 import type { AppProps } from 'next/app'
-import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useState, useEffect } from 'react'
 
 import { Provider } from 'react-redux'
 import store from '@/store/index'
 
-import { CacheProvider, EmotionCache } from '@emotion/react'
-import createEmotionCache from '@/styles/theme/createEmotionCache'
-import { ThemeLayout } from '@/layouts/ThemeLayout'
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
 
-import type { ReactElement, ReactNode } from 'react'
-import { AuthLayout } from '@/layouts/AuthLayout'
-import 'react-datepicker/dist/react-datepicker.css'
 import '@/styles/estilos.css'
-import { LoaderLayout } from '@/layouts/LoaderLayout/LoaderLayout'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
-import { FilterLayout } from '@/layouts/FilterLayout'
-import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary'
+import { SnackbarProvider } from 'notistack'
+import { NavigationLayout } from '@/layouts/NavigationLayout'
+import { createTheme } from '@mui/material/styles'
+import { themeOptions } from '@/config/themeOptions'
 
-interface MyAppProps extends AppProps {
-	emotionCache?: EmotionCache
-}
+const MyApp: React.FunctionComponent<AppProps> = (props) => {
+	const { Component, pageProps } = props
+	const router = useRouter()
+	const [mounted, setMounted] = useState(false)
 
-const clientSideEmotionCache = createEmotionCache()
+	useEffect(() => {
+		setMounted(true)
+	}, [])
 
-type NextPageWithLayout = NextPage & {
-	getLayout?: (page: ReactElement) => ReactNode
-}
+	const theme = createTheme(themeOptions())
 
-type AppPropsWithLayout = AppProps & {
-	Component: NextPageWithLayout
-}
+	if (!mounted) {
+		return (
+			<Provider store={store}>
+				<AppRouterCacheProvider>
+					<ThemeProvider theme={theme}>
+						<CssBaseline />
+						<SnackbarProvider>
+							<Component {...pageProps} />
+						</SnackbarProvider>
+					</ThemeProvider>
+				</AppRouterCacheProvider>
+			</Provider>
+		)
+	}
 
-const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
-	const { emotionCache = clientSideEmotionCache, ...rest } = props
-	const { Component, pageProps }: AppPropsWithLayout = rest
-
-	// Use the layout defined at the page level, if available
-	const getLayout = Component.getLayout ?? ((page) => page)
+	const isLoginPage = router.asPath === '/login'
 
 	return (
-		<DndProvider backend={HTML5Backend}>
-			<Provider store={store}>
-				<CacheProvider value={emotionCache}>
-					<LoaderLayout>
-						<ThemeLayout>
-							<ErrorBoundary>
-								<AuthLayout>
-									<FilterLayout>
-										{getLayout(
-											<Component {...pageProps} />
-										)}
-									</FilterLayout>
-								</AuthLayout>
-							</ErrorBoundary>
-						</ThemeLayout>
-					</LoaderLayout>
-				</CacheProvider>
-			</Provider>
-		</DndProvider>
+		<Provider store={store}>
+			<AppRouterCacheProvider>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<SnackbarProvider>
+						{isLoginPage ? (
+							<Component {...pageProps} />
+						) : (
+							<NavigationLayout>
+								<Component {...pageProps} />
+							</NavigationLayout>
+						)}
+					</SnackbarProvider>
+				</ThemeProvider>
+			</AppRouterCacheProvider>
+		</Provider>
 	)
 }
 

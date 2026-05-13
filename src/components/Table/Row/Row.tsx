@@ -26,7 +26,6 @@ import { GenericObject } from '@/types/GenericObject'
 import { MenuItem } from './MenuItem'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { ColumnSubtable } from './ColumnSubtable'
-import ReactMarkdown from 'react-markdown'
 
 interface Props<T> {
 	headers: TableHeader[]
@@ -157,9 +156,7 @@ export const Row = <T extends GenericObject>({
 									}}
 								>
 									{type === undefined ? (
-										<ReactMarkdown>
-											{propertyValue ?? ''}
-										</ReactMarkdown>
+										<span>{propertyValue ?? ''}</span>
 									) : type === 'expand' &&
 									  subtableData?.length ? (
 										<Tooltip title={propertyValue}>

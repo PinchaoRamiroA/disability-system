@@ -1,5 +1,4 @@
 import { Breakpoint, SxProps } from '@mui/material'
-import { ChildrenType } from './Children'
 
 export interface ModalType {
 	open: boolean
@@ -7,7 +6,7 @@ export interface ModalType {
 }
 
 export interface ConfirmationModalType extends ModalType {
-	children?: ChildrenType
+	children?: React.ReactNode
 	title: string
 	contentText?: string
 	confirmAction: () => void

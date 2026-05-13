@@ -1,1 +1,0 @@
-export { SplitsReview } from './SplitsReview'

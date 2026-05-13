@@ -1,7 +1,6 @@
-import { styled } from '@mui/system'
-import { Theme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 
-export const Header = styled('div')<{ theme?: Theme }>(({ theme }) => ({
+export const Header = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
