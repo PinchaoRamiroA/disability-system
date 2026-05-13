@@ -48,7 +48,9 @@ interface RoleOption {
 
 export default function UsuariosPage() {
 	const { role, hasPermission } = usePermission()
-	const { showError, showSuccess } = useNotifier()
+	const { enqueueSnackbar } = useNotifier()
+	const showError = (msg: string) => enqueueSnackbar(msg, { variant: 'error' })
+	const showSuccess = (msg: string) => enqueueSnackbar(msg, { variant: 'success' })
 	const [users, setUsers] = useState<AuthUser[]>([])
 	const [roles, setRoles] = useState<RoleOption[]>([])
 	const [loading, setLoading] = useState(false)
@@ -93,7 +95,7 @@ export default function UsuariosPage() {
 
 	const handleEditClick = (user: AuthUser) => {
 		setSelectedUser(user)
-		setNewRole(user.rol.id_rol)
+		setNewRole(user.rol?.id_rol || '')
 		setEditDialogOpen(true)
 	}
 
@@ -101,7 +103,7 @@ export default function UsuariosPage() {
 		if (!selectedUser || newRole === '') return
 
 		try {
-			await updateUser(selectedUser.id, { id_rol: Number(newRole) })
+			await updateUser(selectedUser.id!, { id_rol: Number(newRole) })
 			showSuccess('Rol actualizado correctamente')
 			setEditDialogOpen(false)
 			fetchUsers()
@@ -112,7 +114,7 @@ export default function UsuariosPage() {
 
 	const handleToggleStatus = async (user: AuthUser) => {
 		try {
-			await changeUserStatus(user.id, !user.estado)
+			await changeUserStatus(user.id!, !user.estado)
 			showSuccess(
 				`Usuario ${user.estado ? 'desactivado' : 'activado'} correctamente`
 			)
@@ -168,7 +170,7 @@ export default function UsuariosPage() {
 								<TableCell>{user.numero_documento}</TableCell>
 								<TableCell>
 									<Chip
-										label={user.rol.nombre}
+										label={user.rol?.nombre || '-'}
 										size="small"
 										color="primary"
 										variant="outlined"
