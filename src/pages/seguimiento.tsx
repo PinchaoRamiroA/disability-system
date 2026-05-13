@@ -25,7 +25,7 @@ import { usePermission } from '@/hooks/usePermission'
 import useNotifier from '@/hooks/useNotifier'
 import { PageLayout } from '@/components/layouts/PageLayout'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { z } from 'zod'
 import dayjs from 'dayjs'
 import SaveIcon from '@mui/icons-material/Save'
 
@@ -42,11 +42,11 @@ interface FormValues {
 	tipo_seguimiento: string
 }
 
-const validationSchema = Yup.object({
-	id_incapacidad: Yup.number().required('Incapacidad es requerida'),
-	descripcion: Yup.string().required('Descripción es requerida'),
-	fecha_contacto: Yup.date().required('Fecha de contacto es requerida'),
-	tipo_seguimiento: Yup.string().required('Tipo de seguimiento es requerido'),
+const validationSchema = z.object({
+	id_incapacidad: z.number(),
+	descripcion: z.string().min(1, 'Descripción es requerida'),
+	fecha_contacto: z.string().min(1, 'Fecha de contacto es requerida'),
+	tipo_seguimiento: z.string().min(1, 'Tipo de seguimiento es requerido'),
 })
 
 export default function SeguimientoPage() {

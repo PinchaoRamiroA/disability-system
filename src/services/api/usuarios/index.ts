@@ -49,10 +49,10 @@ export const getUserById = async (
 }
 
 export const updateUser = async (
-	id: number,
-	data: UpdateUserRequest
-): Promise<AxiosResponse<ApiResponse<AuthUser>> => => {
-	return orchestratorWithAuthClient.put(`/usuarios/${id}`, data)
+    id: number,
+    data: UpdateUserRequest
+): Promise<AxiosResponse<ApiResponse<AuthUser>>> => {
+    return orchestratorWithAuthClient.put(`/usuarios/${id}`, data)
 }
 
 export const registerUser = async (
@@ -70,7 +70,7 @@ export const deleteUser = async (
 export const changeUserStatus = async (
 	id: number,
 	estado: boolean
-): Promise<AxiosResponse<ApiResponse<AuthUser>> => => {
+): Promise<AxiosResponse<ApiResponse<AuthUser>>> => {
 	return orchestratorWithAuthClient.patch(`/usuarios/${id}/estado`, { estado })
 }
 

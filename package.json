@@ -40,7 +40,8 @@
 		"react-dom": "^18.3.0",
 		"react-redux": "^9.1.0",
 		"react-redux-loading-bar": "^5.0.4",
-		"tailwindcss": "^4.3.0"
+		"tailwindcss": "^4.3.0",
+		"zod": "^4.4.3"
 	},
 	"devDependencies": {
 		"@next/bundle-analyzer": "^16.0.0",

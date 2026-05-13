@@ -7,7 +7,7 @@ import {
 	UserFilters,
 } from '@/services/api/usuarios'
 import { AuthUser, Role } from '@/types/api'
-import { useNotifier } from '@/hooks/useNotifier'
+import useNotifier from '@/hooks/useNotifier'
 import { usePermission, Permission } from '@/hooks/usePermission'
 import {
 	Box,

@@ -27,7 +27,7 @@ import useNotifier from '@/hooks/useNotifier'
 import { PageLayout } from '@/components/layouts/PageLayout'
 import { Table } from '@/components/Table'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { z } from 'zod'
 import dayjs from 'dayjs'
 import SaveIcon from '@mui/icons-material/Save'
 
@@ -58,14 +58,14 @@ interface FormValues {
 	periodo_contable: string
 }
 
-const schema = Yup.object({
-	id_entidad: Yup.number().required('Entidad requerida'),
-	tipo_pago: Yup.string().required('Tipo requerido'),
-	estado_pago: Yup.string().required('Estado requerido'),
-	valor: Yup.string().required('Valor requerido'),
-	fecha_pago: Yup.string().required('Fecha requerida'),
-	descripcion: Yup.string(),
-	periodo_contable: Yup.string(),
+const schema = z.object({
+	id_entidad: z.number(),
+	tipo_pago: z.string(),
+	estado_pago: z.string(),
+	valor: z.string().min(1, 'Valor requerido'),
+	fecha_pago: z.string().min(1, 'Fecha requerida'),
+	descripcion: z.string().optional(),
+	periodo_contable: z.string().optional(),
 })
 
 export default function PagosPage() {

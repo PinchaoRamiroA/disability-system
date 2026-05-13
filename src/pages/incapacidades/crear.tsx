@@ -13,7 +13,7 @@ import {
 	InputAdornment,
 } from '@mui/material'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { z } from 'zod'
 import SaveIcon from '@mui/icons-material/Save'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
@@ -55,18 +55,16 @@ interface FormValues {
 	observaciones: string
 }
 
-const validationSchema = Yup.object({
-	titulo: Yup.string().required('Título es requerido'),
-	id_tipo: Yup.number().required('Tipo es requerido'),
-	id_entidad: Yup.number().required('Entidad es requerida'),
-	origen: Yup.string().required('Origen es requerido'),
-	canal_recepcion: Yup.string().required('Canal de recepción es requerido'),
-	fecha_inicio: Yup.date().required('Fecha de inicio es requerida'),
-	fecha_fin: Yup.date()
-		.required('Fecha de fin es requerida')
-		.min(Yup.ref('fecha_inicio'), 'La fecha fin debe ser posterior a fecha inicio'),
-	fecha_radicacion: Yup.date(),
-	observaciones: Yup.string(),
+const validationSchema = z.object({
+	titulo: z.string().min(1, 'Título es requerido'),
+	id_tipo: z.number(),
+	id_entidad: z.number(),
+	origen: z.string().min(1, 'Origen es requerido'),
+	canal_recepcion: z.string().min(1, 'Canal de recepción es requerido'),
+	fecha_inicio: z.string().min(1, 'Fecha de inicio es requerida'),
+	fecha_fin: z.string().min(1, 'Fecha de fin es requerida'),
+	fecha_radicacion: z.string().optional(),
+	observaciones: z.string().optional(),
 })
 
 export default function CrearIncapacidadPage() {
