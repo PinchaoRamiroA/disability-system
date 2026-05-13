@@ -6,6 +6,7 @@ export const selectAuth = (state: AppState) => state.auth
 export const userSelector = createSelector(selectAuth, (state) => ({
 	email: state.email || '',
 	role: state.role || '',
+	permisos: state.permisos || [],
 }))
 
 export const authSelector = createSelector(selectAuth, (state) => ({
@@ -13,6 +14,7 @@ export const authSelector = createSelector(selectAuth, (state) => ({
 	user: {
 		email: state.email || '',
 		role: state.role || '',
+		permisos: state.permisos || [],
 	},
 }))
 

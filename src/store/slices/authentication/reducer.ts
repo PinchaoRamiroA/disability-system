@@ -6,6 +6,7 @@ export interface AuthState {
 	email: string | null
 	nombre: string | null
 	role: string | null
+	permisos: string[]
 	status: 'idle' | 'pending' | 'succeeded' | 'failed'
 }
 
@@ -14,6 +15,7 @@ const initialState: AuthState = {
 	email: null,
 	nombre: null,
 	role: null,
+	permisos: [],
 	status: 'idle',
 }
 
@@ -27,6 +29,7 @@ export const authReducer = createReducer(initialState, (builder) => {
 			state.email = action.payload.email
 			state.nombre = action.payload.nombre
 			state.role = action.payload.role
+			state.permisos = action.payload.permisos || []
 			state.status = 'succeeded'
 		})
 		.addCase(thunkLogin.rejected, (state) => {
@@ -39,6 +42,7 @@ export const authReducer = createReducer(initialState, (builder) => {
 				state.email = action.payload.email
 				state.nombre = action.payload.nombre
 				state.role = action.payload.role
+				state.permisos = action.payload.permisos || []
 			}
 		})
 })

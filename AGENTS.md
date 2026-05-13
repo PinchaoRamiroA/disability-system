@@ -12,15 +12,19 @@ Agents MUST read documentation in this order:
 
 ---
 
-## Absolute Rules
+## Developer Commands
 
-- **Never** invent API routes not documented in docs/backend/endpoints.md
-- **Never** create database fields not documented in docs/database/schema.md
-- **Always** use contracts/ for API types and Zod schemas
-- **Always** reuse existing components from src/components/
-- **Prefer** server-first architecture
-- **Never** use Redux
-- **Never** use MUI for layouts, basic buttons, or typography
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (port 3000) |
+| `npm run build` | Production build |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run Jest tests |
+| `npm run cy` | Open Cypress UI |
+| `npm run e2e` | Run E2E tests with dev server |
+| `npm run e2e:headless` | Run E2E tests headless |
+
+Pre-commit hook runs `lint-staged` on staged files.
 
 ---
 
@@ -59,7 +63,7 @@ For design system and visual guidelines, see: **DESING.md**
 
 ## Naming Convention
 
-Always use consistent naming:
+Use consistent naming:
 
 ```
 incapacidad          (NOT: leave, medical, health)
@@ -72,11 +76,24 @@ pago                 (NOT: payment, collection)
 
 ---
 
-## Forbidden Patterns
+## Code Style
 
-- Do not use Redux
-- Do not fetch directly inside UI components
-- Do not use inline business logic
-- Do not create duplicated DTOs
-- Do not use MUI for basic UI elements
-- Do not mix naming conventions
+- ESLint rules: `prefer-const`, single quotes, no semicolons
+- Prettier: 4 spaces, no semicolons, single quotes, trailing commas
+- TypeScript strict mode enabled
+- Path aliases: `@/components/*`, `@/hooks/*`, `@/store/*`, etc.
+
+---
+
+## Absolute Rules
+
+- **Never** invent API routes not documented in docs/backend/endpoints.md
+- **Never** create database fields not documented in docs/database/schema.md
+- **Always** use contracts/ for API types and Zod schemas
+- **Always** reuse existing components from src/components/
+- **Prefer** server-first architecture
+- **Do not** fetch directly inside UI components
+- **Do not** use inline business logic
+- **Do not** create duplicated DTOs
+- **Prefer** Redux (via RTK) for global state; only use for truly global state
+- **Avoid** MUI for basic layouts, buttons, typography - use custom components instead; reserve MUI for complex interactive components (datagrids, datepickers, etc.)

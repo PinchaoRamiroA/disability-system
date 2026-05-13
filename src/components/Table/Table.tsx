@@ -6,29 +6,44 @@ import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import TableBody from '@mui/material/TableBody'
 import Paper from '@mui/material/Paper'
-import {
-	NoDataText,
-	TableHeader,
-} from '@/types/Table'
-import { Status } from '@/types/status'
+import Pagination from '@mui/material/Pagination'
+import Box from '@mui/material/Box'
 
-interface Props<T> {
-	headers: TableHeader[]
-	status: Status
-	data: T[]
-	noDataText?: NoDataText
-	renderRow?: (item: T) => React.ReactNode
+interface Column {
+	id: string
+	label: string
+	width?: number
+	minWidth?: number
+	render?: (row: unknown) => React.ReactNode
 }
 
-export function Table<T>({
-	headers,
-	status,
+interface TableProps {
+	columns: Column[]
+	data: unknown[]
+	loading?: boolean
+	onRowClick?: (row: unknown) => void
+	emptyMessage?: string
+	pagination?: {
+		page: number
+		totalPages: number
+		onPageChange: (page: number) => void
+	}
+}
+
+export function Table({
+	columns,
 	data,
-	noDataText,
-	renderRow,
-}: Props<T>) {
-	const isLoading = status === 'pending' || status === 'loading'
+	loading = false,
+	onRowClick,
+	emptyMessage = 'No hay datos',
+	pagination,
+}: TableProps) {
 	const isEmpty = data.length === 0
+
+	const headers = columns.map((col) => ({
+		propertyName: col.id,
+		label: col.label,
+	}))
 
 	return (
 		<Paper>
@@ -37,41 +52,63 @@ export function Table<T>({
 					<TableHead>
 						<TableRow>
 							{headers.map((header) => (
-								<TableCell key={header.propertyName}>
+								<TableCell
+									key={header.propertyName}
+									style={{
+										width: columns.find((c) => c.id === header.propertyName)?.width,
+										minWidth:
+											columns.find((c) => c.id === header.propertyName)
+												?.minWidth || 'auto',
+									}}
+								>
 									{header.label}
 								</TableCell>
 							))}
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{isLoading ? (
+						{loading ? (
 							<TableRow>
-								<TableCell colSpan={headers.length} align="center">
+								<TableCell colSpan={columns.length} align="center">
 									Cargando...
 								</TableCell>
 							</TableRow>
 						) : isEmpty ? (
 							<TableRow>
-								<TableCell colSpan={headers.length} align="center">
-									{noDataText?.title || 'No hay datos'}
+								<TableCell colSpan={columns.length} align="center">
+									{emptyMessage}
 								</TableCell>
 							</TableRow>
 						) : (
 							data.map((item, index) => (
-								<TableRow key={index}>
-									{renderRow ? (
-										renderRow(item)
-									) : (
-										<TableCell colSpan={headers.length}>
-											{JSON.stringify(item)}
+								<TableRow
+									key={index}
+									onClick={() => onRowClick?.(item)}
+									style={{ cursor: onRowClick ? 'pointer' : 'default' }}
+								>
+									{columns.map((col) => (
+										<TableCell key={col.id}>
+											{col.render
+												? col.render(item)
+												: (item as Record<string, unknown>)[col.id]?.toString() || '-'}
 										</TableCell>
-									)}
+									))}
 								</TableRow>
 							))
 						)}
 					</TableBody>
 				</MuiTable>
 			</TableContainer>
+			{pagination && (
+				<Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+					<Pagination
+						count={pagination.totalPages}
+						page={pagination.page}
+						onChange={(_, value) => pagination.onPageChange(value)}
+						color="primary"
+					/>
+				</Box>
+			)}
 		</Paper>
 	)
 }

@@ -11,7 +11,9 @@ export const thunkLogin = createAsyncThunk<Auth, { email: string; password: stri
 		try {
 			const response = await api.login({ email, password })
 			saveAuthToken(response)
-			return normalizeAuthUser(response.user)
+			const user = normalizeAuthUser(response.user)
+			localStorage.setItem('user', JSON.stringify(user))
+			return user
 		} catch (error: unknown) {
 			return rejectWithValue((error as Error).message)
 		}
@@ -28,12 +30,10 @@ export const retrieveLogin = createAsyncThunk<Auth | null, { token?: string }>(
 	async ({ token }) => {
 		const storedToken = token || getAuthToken()
 		if (storedToken) {
-			return {
-				id: 1,
-				email: 'user@example.com',
-				nombre: 'Usuario',
-				role: 'admin',
-			} as Auth
+			const storedUser = localStorage.getItem('user')
+			if (storedUser) {
+				return JSON.parse(storedUser) as Auth
+			}
 		}
 		return null
 	}

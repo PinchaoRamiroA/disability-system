@@ -10,6 +10,7 @@ export type Auth = {
 	email: string
 	nombre: string
 	role: string
+	permisos: string[]
 	numero_celular?: string
 	direccion?: string
 	numero_documento?: string
@@ -50,6 +51,7 @@ export const normalizeAuthUser = (user: Auth | AuthUser): Auth => {
 			email: user.correo,
 			nombre: user.nombre,
 			role: user.rol.nombre,
+			permisos: user.rol.permisos || [],
 			numero_celular: user.numero_celular,
 			direccion: user.direccion,
 			numero_documento: user.numero_documento,

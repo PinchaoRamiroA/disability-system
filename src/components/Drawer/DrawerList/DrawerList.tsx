@@ -1,25 +1,38 @@
 import List from '@mui/material/List'
 import { DrawerItem } from '../DrawerItem'
+import { usePermission, Permission } from '@/hooks/usePermission'
 
-const menuItems = [
-	{ path: 'dashboard', label: 'Dashboard' },
-	{ path: 'incapacidades', label: 'Incapacidades' },
-	{ path: 'documentos', label: 'Documentos' },
-	{ path: 'transcripcion', label: 'Transcripción EPS/ARL' },
-	{ path: 'seguimiento', label: 'Seguimiento y Cobro' },
-	{ path: 'pagos', label: 'Pagos' },
-	{ path: 'conciliacion', label: 'Conciliación' },
-	{ path: 'alertas', label: 'Alertas' },
-	{ path: 'reportes', label: 'Reportes' },
-	{ path: 'usuarios', label: 'Usuarios' },
-	{ path: 'configuracion', label: 'Configuración' },
-	{ path: 'auditoria', label: 'Auditoría' },
+interface MenuItem {
+	path: string
+	label: string
+	permiso: Permission
+}
+
+const menuItems: MenuItem[] = [
+	{ path: 'dashboard', label: 'Dashboard', permiso: 'consultar_incapacidad' },
+	{ path: 'incapacidades', label: 'Incapacidades', permiso: 'consultar_incapacidad' },
+	{ path: 'documentos', label: 'Documentos', permiso: 'consultar_incapacidad' },
+	{ path: 'transcripcion', label: 'Transcripción EPS/ARL', permiso: 'consultar_incapacidad' },
+	{ path: 'seguimiento', label: 'Seguimiento y Cobro', permiso: 'gestionar_cobro_persuasivo' },
+	{ path: 'pagos', label: 'Pagos', permiso: 'registrar_pago' },
+	{ path: 'conciliacion', label: 'Conciliación', permiso: 'realizar_conciliacion' },
+	{ path: 'alertas', label: 'Alertas', permiso: 'generar_alertas' },
+	{ path: 'reportes', label: 'Reportes', permiso: 'consultar_reportes' },
+	{ path: 'usuarios', label: 'Usuarios', permiso: 'gestionar_usuarios' },
+	{ path: 'configuracion', label: 'Configuración', permiso: 'gestionar_usuarios' },
+	{ path: 'auditoria', label: 'Auditoría', permiso: 'gestionar_usuarios' },
 ]
 
 export const DrawerList = () => {
+	const { hasPermission } = usePermission()
+
+	const visibleItems = menuItems.filter((item) =>
+		hasPermission(item.permiso)
+	)
+
 	return (
 		<List component="nav" aria-label="barra de navegación">
-			{menuItems.map((item) => (
+			{visibleItems.map((item) => (
 				<DrawerItem
 					key={item.path}
 					path={item.path}
