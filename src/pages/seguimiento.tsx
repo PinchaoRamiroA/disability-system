@@ -25,7 +25,6 @@ import { usePermission } from '@/hooks/usePermission'
 import useNotifier from '@/hooks/useNotifier'
 import { PageLayout } from '@/components/layouts/PageLayout'
 import { useFormik } from 'formik'
-import { z } from 'zod'
 import dayjs from 'dayjs'
 import SaveIcon from '@mui/icons-material/Save'
 
@@ -42,12 +41,21 @@ interface FormValues {
 	tipo_seguimiento: string
 }
 
-const validationSchema = z.object({
-	id_incapacidad: z.number(),
-	descripcion: z.string().min(1, 'Descripción es requerida'),
-	fecha_contacto: z.string().min(1, 'Fecha de contacto es requerida'),
-	tipo_seguimiento: z.string().min(1, 'Tipo de seguimiento es requerido'),
-})
+const validationSchema = {
+	id_incapacidad: { required: true, message: 'Incapacidad es requerida' },
+	descripcion: { required: true, message: 'Descripción es requerida' },
+	fecha_contacto: { required: true, message: 'Fecha de contacto es requerida' },
+	tipo_seguimiento: { required: true, message: 'Tipo de seguimiento es requerido' },
+}
+
+const validate = (values: FormValues) => {
+	const errors: Partial<Record<keyof FormValues, string>> = {}
+	if (!values.id_incapacidad) errors.id_incapacidad = 'Incapacidad es requerida'
+	if (!values.descripcion) errors.descripcion = 'Descripción es requerida'
+	if (!values.fecha_contacto) errors.fecha_contacto = 'Fecha de contacto es requerida'
+	if (!values.tipo_seguimiento) errors.tipo_seguimiento = 'Tipo de seguimiento es requerido'
+	return errors
+}
 
 export default function SeguimientoPage() {
 	const { hasPermission } = usePermission()
@@ -93,7 +101,7 @@ export default function SeguimientoPage() {
 			fecha_contacto: dayjs().format('YYYY-MM-DD'),
 			tipo_seguimiento: 'persuasivo',
 		},
-		validationSchema,
+		validate,
 		onSubmit: async (values) => {
 			try {
 				await createSeguimiento({

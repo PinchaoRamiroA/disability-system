@@ -234,11 +234,11 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 ### 🔴 PRIORIDAD 12 - AUDITORÍA (Semana 6-7)
 
 #### 12.1 Historial y Auditoría
-- [ ] 12.1.1 Crear página /auditoria
-- [ ] 12.1.2 Timeline global de acciones
-- [ ] 12.1.3 Filtros: usuario, fecha, tipo acción, módulo
-- [ ] 12.1.4 Integrar GET /incapacidades/{id}/historial
-- [ ] 12.1.5 Mostrar cambio realizado, usuario, fecha
+- [x] 12.1.1 Crear página /auditoria
+- [x] 12.1.2 Timeline global de acciones
+- [x] 12.1.3 Filtros: usuario, fecha, tipo acción, módulo
+- [x] 12.1.4 Integrar GET /incapacidades/{id}/historial
+- [x] 12.1.5 Mostrar cambio realizado, usuario, fecha
 
 ---
 

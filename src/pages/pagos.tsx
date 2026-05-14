@@ -24,10 +24,9 @@ import { getEntidades } from '@/services/api/incapacidades'
 import { Pago, Entidad } from '@/types/api'
 import { usePermission } from '@/hooks/usePermission'
 import useNotifier from '@/hooks/useNotifier'
-import { PageLayout } from '@/components/layouts/PageLayout'
 import { Table } from '@/components/Table'
+import { PageLayout } from '@/components/layouts/PageLayout'
 import { useFormik } from 'formik'
-import { z } from 'zod'
 import dayjs from 'dayjs'
 import SaveIcon from '@mui/icons-material/Save'
 
@@ -58,15 +57,25 @@ interface FormValues {
 	periodo_contable: string
 }
 
-const schema = z.object({
-	id_entidad: z.number(),
-	tipo_pago: z.string(),
-	estado_pago: z.string(),
-	valor: z.string().min(1, 'Valor requerido'),
-	fecha_pago: z.string().min(1, 'Fecha requerida'),
-	descripcion: z.string().optional(),
-	periodo_contable: z.string().optional(),
-})
+const schema = {
+	id_entidad: { required: true, message: 'Entidad es requerida' },
+	tipo_pago: { required: true, message: 'Tipo de pago es requerido' },
+	estado_pago: { required: true, message: 'Estado es requerido' },
+	valor: { required: true, message: 'Valor requerido' },
+	fecha_pago: { required: true, message: 'Fecha requerida' },
+	descripcion: { required: false },
+	periodo_contable: { required: false },
+}
+
+const validate = (values: FormValues) => {
+	const errors: Partial<Record<keyof FormValues, string>> = {}
+	if (!values.id_entidad) errors.id_entidad = 'Entidad es requerida' as any
+	if (!values.tipo_pago) errors.tipo_pago = 'Tipo de pago es requerido'
+	if (!values.estado_pago) errors.estado_pago = 'Estado es requerido'
+	if (!values.valor) errors.valor = 'Valor requerido'
+	if (!values.fecha_pago) errors.fecha_pago = 'Fecha requerida'
+	return errors
+}
 
 export default function PagosPage() {
 	const { hasPermission } = usePermission()
@@ -223,7 +232,7 @@ function CreatePagoForm({ entidades, onSuccess, showSuccess, showError }: Props)
 			descripcion: '',
 			periodo_contable: '',
 		},
-		validationSchema: schema,
+		validate,
 		onSubmit: async (values) => {
 			try {
 				const { createPago } = await import('@/services/api/cobros')

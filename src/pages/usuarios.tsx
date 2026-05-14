@@ -163,8 +163,8 @@ export default function UsuariosPage() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{users.map((user) => (
-							<TableRow key={user.id}>
+						{users.map((user, idx) => (
+							<TableRow key={user.id ?? `user-${idx}`}>
 								<TableCell>{user.nombre}</TableCell>
 								<TableCell>{user.correo}</TableCell>
 								<TableCell>{user.numero_documento}</TableCell>

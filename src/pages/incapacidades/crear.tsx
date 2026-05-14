@@ -13,7 +13,6 @@ import {
 	InputAdornment,
 } from '@mui/material'
 import { useFormik } from 'formik'
-import { z } from 'zod'
 import SaveIcon from '@mui/icons-material/Save'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
@@ -28,14 +27,6 @@ import useNotifier from '@/hooks/useNotifier'
 import { PageLayout } from '@/components/layouts/PageLayout'
 import dayjs from 'dayjs'
 
-const ORIGEN_OPTIONS = [
-	{ value: 'enfermedad_general', label: 'Enfermedad General' },
-	{ value: 'accidente_laboral', label: 'Accidente Laboral' },
-	{ value: 'enfermedad_laboral', label: 'Enfermedad Laboral' },
-	{ value: 'licencia_maternidad', label: 'Licencia Maternidad' },
-	{ value: 'licencia_paternidad', label: 'Licencia Paternidad' },
-]
-
 const CANAL_OPTIONS = [
 	{ value: 'email', label: 'Email' },
 	{ value: 'presencial', label: 'Presencial' },
@@ -47,7 +38,6 @@ interface FormValues {
 	titulo: string
 	id_tipo: number | ''
 	id_entidad: number | ''
-	origen: string
 	canal_recepcion: string
 	fecha_inicio: string
 	fecha_fin: string
@@ -55,17 +45,25 @@ interface FormValues {
 	observaciones: string
 }
 
-const validationSchema = z.object({
-	titulo: z.string().min(1, 'Título es requerido'),
-	id_tipo: z.number(),
-	id_entidad: z.number(),
-	origen: z.string().min(1, 'Origen es requerido'),
-	canal_recepcion: z.string().min(1, 'Canal de recepción es requerido'),
-	fecha_inicio: z.string().min(1, 'Fecha de inicio es requerida'),
-	fecha_fin: z.string().min(1, 'Fecha de fin es requerida'),
-	fecha_radicacion: z.string().optional(),
-	observaciones: z.string().optional(),
-})
+const validationSchema = {
+	titulo: { required: true, message: 'Título es requerido' },
+	id_tipo: { required: true, message: 'Tipo es requerido' },
+	id_entidad: { required: true, message: 'Entidad es requerida' },
+	canal_recepcion: { required: true, message: 'Canal de recepción es requerido' },
+	fecha_inicio: { required: true, message: 'Fecha de inicio es requerida' },
+	fecha_fin: { required: true, message: 'Fecha de fin es requerida' },
+}
+
+const validate = (values: FormValues) => {
+	const errors: Partial<Record<keyof FormValues, string>> = {}
+	if (!values.titulo) errors.titulo = 'Título es requerido'
+	if (!values.id_tipo) errors.id_tipo = 'Tipo es requerido' as any
+	if (!values.id_entidad) errors.id_entidad = 'Entidad es requerida' as any
+	if (!values.canal_recepcion) errors.canal_recepcion = 'Canal de recepción es requerido'
+	if (!values.fecha_inicio) errors.fecha_inicio = 'Fecha de inicio es requerida'
+	if (!values.fecha_fin) errors.fecha_fin = 'Fecha de fin es requerida'
+	return errors
+}
 
 export default function CrearIncapacidadPage() {
 	const router = useRouter()
@@ -88,14 +86,13 @@ export default function CrearIncapacidadPage() {
 			titulo: '',
 			id_tipo: '',
 			id_entidad: '',
-			origen: 'enfermedad_general',
 			canal_recepcion: 'presencial',
 			fecha_inicio: dayjs().format('YYYY-MM-DD'),
 			fecha_fin: dayjs().add(3, 'day').format('YYYY-MM-DD'),
 			fecha_radicacion: dayjs().format('YYYY-MM-DD'),
 			observaciones: '',
 		},
-		validationSchema,
+		validate,
 		onSubmit: async (values) => {
 			setSubmitting(true)
 			try {
@@ -103,7 +100,6 @@ export default function CrearIncapacidadPage() {
 					titulo: values.titulo,
 					id_tipo: values.id_tipo as number,
 					id_entidad: values.id_entidad as number,
-					origen: values.origen as 'enfermedad_general' | 'accidente_laboral' | 'enfermedad_laboral' | 'licencia_maternidad' | 'licencia_paternidad',
 					canal_recepcion: values.canal_recepcion as 'email' | 'presencial' | 'virtual' | 'whatsapp',
 					fecha_inicio: values.fecha_inicio,
 					fecha_fin: values.fecha_fin,
@@ -228,28 +224,6 @@ export default function CrearIncapacidadPage() {
 										value={entidad.id_entidad}
 									>
 										{entidad.nombre} ({entidad.tipo})
-									</MenuItem>
-								))}
-							</Select>
-						</FormControl>
-					</Grid>
-
-					<Grid item xs={12} sm={6}>
-						<FormControl fullWidth>
-							<InputLabel>Origen</InputLabel>
-							<Select
-								name="origen"
-								value={formik.values.origen}
-								label="Origen"
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-							>
-								{ORIGEN_OPTIONS.map((origen) => (
-									<MenuItem
-										key={origen.value}
-										value={origen.value}
-									>
-										{origen.label}
 									</MenuItem>
 								))}
 							</Select>

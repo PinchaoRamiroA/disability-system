@@ -167,7 +167,6 @@ export interface CreateIncapacidadRequest {
 	titulo: string
 	fecha_inicio: ISODate
 	fecha_fin: ISODate
-	origen: OrigenIncapacidad
 	canal_recepcion: CanalRecepcion
 	fecha_radicacion?: ISODate
 	fecha_pago?: ISODate
