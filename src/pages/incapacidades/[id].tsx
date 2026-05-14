@@ -337,44 +337,102 @@ const loadIncapacidadData = async () => {
 				<Card sx={{ mb: 3 }}>
 					<CardContent>
 						<Typography variant="h6" gutterBottom>
-							Plazos
+							Plazos y Alertas
 						</Typography>
 						<Grid container spacing={3}>
-							<Grid item xs={12} sm={6} md={4}>
+							<Grid item xs={12} sm={6} md={3}>
 								<Typography variant="caption" color="text.secondary">
-									Días Restantes Transcripción
+									Días Transcurridos
 								</Typography>
 								<Typography
 									variant="h5"
 									color={
-										(plazos.dias_restantes_transcripcion || 0) < 0
+										(plazos as any).dias_transcurridos > 180
 											? 'error'
-											: (plazos.dias_restantes_transcripcion || 0) <= 5
+											: (plazos as any).dias_transcurridos > 90
 											? 'warning'
 											: 'success'
 									}
 								>
-									{plazos.dias_restantes_transcripcion ?? '-'}
+									{(plazos as any).dias_transcurridos ?? '-'}
 								</Typography>
 							</Grid>
-							<Grid item xs={12} sm={6} md={4}>
+							<Grid item xs={12} sm={6} md={3}>
 								<Typography variant="caption" color="text.secondary">
-									Días Restantes Pago
+									Tipo Incapacidad
 								</Typography>
-								<Typography
-									variant="h5"
-									color={
-										(plazos.dias_restantes_pago || 0) < 0
-											? 'error'
-											: (plazos.dias_restantes_pago || 0) <= 5
-											? 'warning'
-											: 'success'
-									}
-								>
-									{plazos.dias_restantes_pago ?? '-'}
+								<Typography variant="body1" fontWeight={500}>
+									{(plazos as any).tipo_incapacidad || '-'}
+								</Typography>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<Typography variant="caption" color="text.secondary">
+									Fecha Límite Pago
+								</Typography>
+								<Typography variant="body1">
+									{(plazos as any).fecha_limite_pago
+										? dayjs((plazos as any).fecha_limite_pago).format('DD/MM/YYYY')
+										: '-'}
+								</Typography>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<Typography variant="caption" color="text.secondary">
+									Fecha Límite Transcripción
+								</Typography>
+								<Typography variant="body1">
+									{(plazos as any).fecha_limite_transcripcion
+										? dayjs((plazos as any).fecha_limite_transcripcion).format('DD/MM/YYYY')
+										: '-'}
+								</Typography>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<Typography variant="caption" color="text.secondary">
+									Fecha Límite Entrega
+								</Typography>
+								<Typography variant="body1">
+									{(plazos as any).fecha_limite_entrega
+										? dayjs((plazos as any).fecha_limite_entrega).format('DD/MM/YYYY')
+										: '-'}
 								</Typography>
 							</Grid>
 						</Grid>
+
+						{(plazos as any).alertas_vencimiento?.length > 0 && (
+							<Box sx={{ mt: 3 }}>
+								<Typography variant="subtitle2" color="error" gutterBottom>
+									Alertas de Vencimiento
+								</Typography>
+								<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '30%' }}>
+									{(plazos as any).alertas_vencimiento.map((alerta: string, idx: number) => (
+										<Chip
+											key={idx}
+											label={alerta}
+											color="error"
+											size="small"
+											variant="outlined"
+										/>
+									))}
+								</Box>
+							</Box>
+						)}
+
+						{(plazos as any).documentos_requeridos?.length > 0 && (
+							<Box sx={{ mt: 3 }}>
+								<Typography variant="subtitle2" gutterBottom>
+									Documentos Requeridos
+								</Typography>
+								<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+									{(plazos as any).documentos_requeridos.map((doc: any, idx: number) => (
+										<Chip
+											key={idx}
+											label={`${doc.nombre}${doc.requerido ? ' *' : ''}`}
+											color={doc.requerido ? 'warning' : 'default'}
+											size="small"
+										/>
+									))}
+								</Box>
+							</Box>
+						)}
 					</CardContent>
 				</Card>
 			)}

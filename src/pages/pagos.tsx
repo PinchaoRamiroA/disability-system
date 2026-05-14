@@ -57,16 +57,6 @@ interface FormValues {
 	periodo_contable: string
 }
 
-const schema = {
-	id_entidad: { required: true, message: 'Entidad es requerida' },
-	tipo_pago: { required: true, message: 'Tipo de pago es requerido' },
-	estado_pago: { required: true, message: 'Estado es requerido' },
-	valor: { required: true, message: 'Valor requerido' },
-	fecha_pago: { required: true, message: 'Fecha requerida' },
-	descripcion: { required: false },
-	periodo_contable: { required: false },
-}
-
 const validate = (values: FormValues) => {
 	const errors: Partial<Record<keyof FormValues, string>> = {}
 	if (!values.id_entidad) errors.id_entidad = 'Entidad es requerida' as any
@@ -142,7 +132,7 @@ export default function PagosPage() {
 
 	const columns = [
 		{ id: 'id_pago', label: 'ID', width: 80 },
-		{ id: 'entidad', label: 'Entidad', render: (row: Pago) => row.entidad?.nombre || '-' },
+		{ id: 'entidad', label: 'Entidad', render: (row: Pago) => (row as any).nombre_entidad || '-' },
 		{ id: 'tipo_pago', label: 'Tipo', render: (row: Pago) => row.tipo_pago },
 		{ id: 'valor', label: 'Valor', render: (row: Pago) => `$${parseFloat(row.valor || '0').toLocaleString()}` },
 		{ id: 'estado_pago', label: 'Estado', render: (row: Pago) => (

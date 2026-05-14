@@ -6,11 +6,7 @@ import { PageLayout } from '@/components/layouts/PageLayout'
 import useNotifier from '@/hooks/useNotifier'
 import { getIncapacidades } from '@/services/api/incapacidades'
 import { Incapacidad } from '@/types/api'
-import {
-	getCarteraEstadisticas,
-	getResumenEntidad,
-	getAlertasVencimiento,
-} from '@/services/api/cartera'
+import { getCarteraEstadisticas, getResumenEntidad, getAlertasVencimiento, getResumenEjecutivo, getReporteVencimientos } from '@/services/api/cartera'
 import { usePermission } from '@/hooks/usePermission'
 import dayjs from 'dayjs'
 
@@ -71,6 +67,35 @@ export default function DashboardPage() {
 	const [incapacidadesPendientes, setPendientes] = useState(0)
 	const [incapacidadesPagadas, setPagadas] = useState(0)
 	const [alertas, setAlertas] = useState(0)
+	const [vencidos, setVencidos] = useState<{ entidad: string; cantidad: number; total_deuda: string }[]>([])
+	const [resumenEjecutivo, setResumenEjecutivo] = useState<{
+		fecha_generacion: string
+		incapacidades_activas: number
+		pagos_pendientes: number
+		pagos_vencidos: number
+		total_dias_perdidos: number
+		total_incapacidades: number
+		total_valor_cartera: string
+		total_valor_cobrado: string
+		total_valor_pendiente: string
+	} | null>(null)
+	const [carteraStats, setCarteraStats] = useState<{
+		total_cartera: string
+		total_pagado: string
+		total_pendiente: string
+		total_vencido: string
+		cantidad_incapacidades: number
+		cantidad_pagos_pendientes: number
+	} | null>(null)
+	const [alertasVencimiento, setAlertasVencimiento] = useState<{
+		IDIncapacidad: number
+		IDEntidad: number
+		NombreEntidad: string
+		DiasVencido: number
+		Estado: string
+		TipoAlerta: string
+		FechaLimitePago: string
+	}[]>([])
 	const [recentIncapacidades, setRecentIncapacidades] = useState<Incapacidad[]>([])
 	const [estadoData, setEstadoData] = useState<{ id: string; label: string; value: number; color: string }[]>([])
 	const [entidadData, setEntidadData] = useState<{ entidad: string; cantidad: number }[]>([])
@@ -84,10 +109,12 @@ export default function DashboardPage() {
 	const loadDashboardData = async () => {
 		setLoading(true)
 		try {
-			const [incapRes, statsRes, alertasRes] = await Promise.all([
+			const [incapRes, statsRes, alertasRes, vencRes, resumenRes] = await Promise.all([
 				getIncapacidades({ page: 1, limit: 50 }),
 				canViewReports ? getCarteraEstadisticas() : Promise.resolve(null),
 				canViewReports ? getAlertasVencimiento({}) : Promise.resolve(null),
+				canViewReports ? getReporteVencimientos() : Promise.resolve(null),
+				canViewReports ? getResumenEjecutivo() : Promise.resolve(null),
 			])
 
 			const allIncapacidades = incapRes.data.data.items
@@ -133,12 +160,66 @@ export default function DashboardPage() {
 				).length
 			)
 
-			if (statsRes) {
-				setStats(statsRes.data.data)
+			if (statsRes && statsRes.data?.data) {
+				const data = statsRes.data.data as any
+				setCarteraStats({
+					total_cartera: data.TotalValorCartera || data.total_cartera || '0',
+					total_pagado: data.TotalValorCobrado || data.total_pagado || '0',
+					total_pendiente: data.TotalValorPendiente || data.total_pendiente || '0',
+					total_vencido: '0',
+					cantidad_incapacidades: data.TotalIncapacidades || 0,
+					cantidad_pagos_pendientes: data.PagosPendientes || 0,
+				})
 			}
 
-			if (alertasRes) {
+			if (alertasRes && alertasRes.data?.data) {
+				setAlertasVencimiento(alertasRes.data.data.map((a: any) => ({
+					IDIncapacidad: a.IDIncapacidad,
+					IDEntidad: a.IDEntidad,
+					NombreEntidad: a.NombreEntidad || 'Sin entidad',
+					DiasVencido: a.DiasVencido,
+					Estado: a.Estado,
+					TipoAlerta: a.TipoAlerta,
+					FechaLimitePago: a.FechaLimitePago,
+				})))
 				setAlertas(alertasRes.data.data.length)
+			}
+
+			if (vencRes && (vencRes.data as any)?.data?.AlertasPagos) {
+				const pagos = (vencRes.data as any).data.AlertasPagos
+				const entidadCounts: Record<string, { cantidad: number; total_deuda: string }> = {}
+				pagos.forEach((p: any) => {
+					const entidad = p.NombreEntidad || 'Sin entidad'
+					if (!entidadCounts[entidad]) {
+						entidadCounts[entidad] = { cantidad: 0, total_deuda: '0' }
+					}
+					entidadCounts[entidad].cantidad += 1
+					entidadCounts[entidad].total_deuda = String(
+						parseFloat(entidadCounts[entidad].total_deuda) + parseFloat(p.Valor || '0')
+					)
+				})
+				setVencidos(
+					Object.entries(entidadCounts).map(([entidad, data]) => ({
+						entidad,
+						cantidad: data.cantidad,
+						total_deuda: data.total_deuda,
+					}))
+				)
+			}
+
+			if (resumenRes && resumenRes.data?.data) {
+				const data = resumenRes.data.data as any
+				setResumenEjecutivo({
+					fecha_generacion: data.fecha_generacion || '',
+					incapacidades_activas: data.incapacidades_activas ?? data.IncapacidadesActivas ?? 0,
+					pagos_pendientes: data.pagos_pendientes ?? data.PagosPendientes ?? 0,
+					pagos_vencidos: data.pagos_vencidos ?? data.PagosVencidos ?? 0,
+					total_dias_perdidos: data.total_dias_perdidos ?? 0,
+					total_incapacidades: data.total_incapacidades ?? 0,
+					total_valor_cartera: data.total_valor_cartera ?? data.total_cartera ?? '0',
+					total_valor_cobrado: data.total_valor_cobrado ?? data.total_pagado ?? '0',
+					total_valor_pendiente: data.total_valor_pendiente ?? data.total_pendiente ?? '0',
+				})
 			}
 		} catch (error) {
 			showError('Error al cargar datos del dashboard')
@@ -162,45 +243,45 @@ export default function DashboardPage() {
 
 			<Grid container spacing={3}>
 				<Grid item xs={12} sm={6} md={3}>
-					<KpiCard title="Incapacidades Activas" value={incapacidadesActivas} color="#1976d2" />
+					<KpiCard title="Total Incapacidades" value={resumenEjecutivo?.total_incapacidades ?? incapacidadesActivas} color="#1976d2" />
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
-					<KpiCard title="Pendientes" value={incapacidadesPendientes} color="#f57c00" />
+					<KpiCard title="Incapacidades Activas" value={resumenEjecutivo?.incapacidades_activas ?? incapacidadesActivas} color="#1976d2" />
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
-					<KpiCard title="Pagadas" value={incapacidadesPagadas} color="#388e3c" />
+					<KpiCard title="Pagos Pendientes" value={resumenEjecutivo?.pagos_pendientes ?? 0} color="#f57c00" />
 				</Grid>
 				<Grid item xs={12} sm={6} md={3}>
-					<KpiCard title="Alertas Vencimiento" value={alertas} color="#d32f2f" />
+					<KpiCard title="Pagos Vencidos" value={resumenEjecutivo?.pagos_vencidos ?? alertas} color="#d32f2f" />
 				</Grid>
 
-				{canViewReports && stats && (
+				{carteraStats && (
 					<>
 						<Grid item xs={12} sm={6} md={3}>
 							<KpiCard
 								title="Total Cartera"
-								value={`$${parseFloat(stats.total_cartera || '0').toLocaleString()}`}
-								color="#7b1fa2"
+								value={`$${parseFloat(carteraStats.total_cartera || '0').toLocaleString()}`}
+								color="#7b1fa6"
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6} md={3}>
 							<KpiCard
 								title="Total Pagado"
-								value={`$${parseFloat(stats.total_pagado || '0').toLocaleString()}`}
+								value={`$${parseFloat(carteraStats.total_pagado || '0').toLocaleString()}`}
 								color="#388e3c"
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6} md={3}>
 							<KpiCard
 								title="Total Pendiente"
-								value={`$${parseFloat(stats.total_pendiente || '0').toLocaleString()}`}
+								value={`$${parseFloat(carteraStats.total_pendiente || '0').toLocaleString()}`}
 								color="#f57c00"
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6} md={3}>
 							<KpiCard
 								title="Total Vencido"
-								value={`$${parseFloat(stats.total_vencido || '0').toLocaleString()}`}
+								value={`$${parseFloat(carteraStats.total_vencido || '0').toLocaleString()}`}
 								color="#d32f2f"
 							/>
 						</Grid>
@@ -272,6 +353,88 @@ export default function DashboardPage() {
 							</CardContent>
 						</Card>
 					</Grid>
+
+					{vencidos.length > 0 && (
+						<Grid item xs={12}>
+							<Card>
+								<CardContent>
+									<Typography variant="h6" gutterBottom>
+										Pagos Vencidos
+									</Typography>
+									<Box sx={{ overflowX: 'auto' }}>
+										<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+											<thead>
+												<tr style={{ backgroundColor: '#f5f5f5' }}>
+													<th style={{ padding: '8px 12px', textAlign: 'left' }}>Entidad</th>
+													<th style={{ padding: '8px 12px', textAlign: 'right' }}>Casos</th>
+													<th style={{ padding: '8px 12px', textAlign: 'right' }}>Total Deuda</th>
+												</tr>
+											</thead>
+											<tbody>
+												{vencidos.map((v, idx) => (
+													<tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
+														<td style={{ padding: '8px 12px' }}>{v.entidad}</td>
+														<td style={{ padding: '8px 12px', textAlign: 'right' }}>{v.cantidad}</td>
+														<td style={{ padding: '8px 12px', textAlign: 'right' }}>
+															${parseFloat(v.total_deuda || '0').toLocaleString()}
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</Box>
+								</CardContent>
+							</Card>
+						</Grid>
+					)}
+
+					{alertasVencimiento.length > 0 && (
+						<Grid item xs={12}>
+							<Card>
+								<CardContent>
+									<Typography variant="h6" gutterBottom>
+										Alertas de Vencimiento
+									</Typography>
+									<Box sx={{ overflowX: 'auto' }}>
+										<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+											<thead>
+												<tr style={{ backgroundColor: '#f5f5f5' }}>
+													<th style={{ padding: '8px 12px', textAlign: 'left' }}>ID Incapacidad</th>
+													<th style={{ padding: '8px 12px', textAlign: 'left' }}>Entidad</th>
+													<th style={{ padding: '8px 12px', textAlign: 'center' }}>Días Vencido</th>
+													<th style={{ padding: '8px 12px', textAlign: 'center' }}>Tipo Alerta</th>
+													<th style={{ padding: '8px 12px', textAlign: 'left' }}>Estado</th>
+												</tr>
+											</thead>
+											<tbody>
+												{alertasVencimiento.map((a, idx) => (
+													<tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
+														<td style={{ padding: '8px 12px' }}>{a.IDIncapacidad}</td>
+														<td style={{ padding: '8px 12px' }}>{a.NombreEntidad}</td>
+														<td style={{ padding: '8px 12px', textAlign: 'center' }}>
+															<Chip
+																label={a.DiasVencido}
+																size="small"
+																color={a.DiasVencido > 90 ? 'error' : a.DiasVencido > 30 ? 'warning' : 'default'}
+															/>
+														</td>
+														<td style={{ padding: '8px 12px', textAlign: 'center' }}>
+															<Chip
+																label={a.TipoAlerta}
+																size="small"
+																color={a.TipoAlerta === 'Crítico' ? 'error' : 'warning'}
+															/>
+														</td>
+														<td style={{ padding: '8px 12px' }}>{a.Estado}</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</Box>
+								</CardContent>
+							</Card>
+						</Grid>
+					)}
 				</Grid>
 			)}
 

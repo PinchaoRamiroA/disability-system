@@ -8,8 +8,6 @@ import {
 	Card,
 	CardContent,
 	Checkbox,
-	TextField,
-	IconButton,
 } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check'
 import { getPagos, reconcilePago } from '@/services/api/cobros'
@@ -174,9 +172,9 @@ export default function ConciliacionPage() {
 												/>
 											</td>
 											<td style={{ padding: '12px' }}>{pago.id_pago}</td>
-											<td style={{ padding: '12px' }}>{pago.entidad?.nombre}</td>
+											<td style={{ padding: '12px' }}>{pago.nombre_entidad || '-'}</td>
 											<td style={{ padding: '12px' }}>
-												{pago.incapacidad?.titulo || '-'}
+												{pago.id_incapacidad || '-'}
 											</td>
 											<td style={{ padding: '12px' }}>{pago.tipo_pago}</td>
 											<td style={{ padding: '12px', textAlign: 'right' }}>

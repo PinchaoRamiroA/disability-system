@@ -12,12 +12,12 @@ import { AlertaVencimiento, Notificacion } from '@/types/api'
 import { usePermission } from '@/hooks/usePermission'
 import { useRouter } from 'next/router'
 import dayjs from 'dayjs'
-import Link from 'next/link'
 
-const PRIORITY_CONFIG = {
-	alta: { color: 'error', icon: <ErrorIcon />, label: 'Alta' },
-	media: { color: 'warning', icon: <WarningIcon />, label: 'Media' },
-	baja: { color: 'success', icon: <CheckCircleIcon />, label: 'Baja' },
+const PRIORITY_CONFIG: Record<string, { color: 'error' | 'warning' | 'success'; icon?: React.ReactElement; label: string }> = {
+	Alto: { color: 'error', icon: <ErrorIcon />, label: 'Alta' },
+	Medio: { color: 'warning', icon: <CheckCircleIcon />, label: 'Media' },
+	Bajo: { color: 'success', icon: <CheckCircleIcon />, label: 'Baja' },
+	Crítico: { color: 'error', icon: <ErrorIcon />, label: 'Crítico' },
 }
 
 const TIPO_ALERTA_LABELS: Record<string, string> = {
@@ -56,10 +56,6 @@ const AlertaCard = ({ alerta, onVer }: AlertaCardProps) => {
 					</Typography>
 				</Box>
 
-				<Typography variant="subtitle2" fontWeight={600} gutterBottom>
-					{TIPO_ALERTA_LABELS[alerta.tipo_alerta] || alerta.tipo_alerta}
-				</Typography>
-
 				<Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
 					{alerta.mensaje}
 				</Typography>
@@ -67,7 +63,7 @@ const AlertaCard = ({ alerta, onVer }: AlertaCardProps) => {
 				{alerta.incapacidad && (
 					<Box sx={{ mb: 1 }}>
 						<Typography variant="caption" color="text.secondary">
-							Incapacidad #{alerta.incapacidad.id_incapacidad}
+							Incapacidad #{(alerta.incapacidad as any).id || (alerta.incapacidad as any).id_incapacidad}
 						</Typography>
 						<Typography variant="body2">
 							{alerta.incapacidad.titulo}
@@ -202,13 +198,6 @@ export default function AlertasPage() {
 			showError('Error al marcar todas como leídas')
 		}
 	}
-
-	const alertasPorPrioridad = {
-		alta: alertas.filter((a) => a.prioridad === 'alta'),
-		media: alertas.filter((a) => a.prioridad === 'media'),
-		baja: alertas.filter((a) => a.prioridad === 'baja'),
-	}
-
 	if (!canViewAlerts) {
 		return (
 			<PageLayout title="Centro de Alertas">
@@ -244,26 +233,14 @@ export default function AlertasPage() {
 						</Card>
 					) : (
 						<Grid container spacing={3}>
-							{Object.entries(alertasPorPrioridad).map(([prioridad, items]) =>
-								items.length > 0 ? (
-									<Grid item xs={12} key={prioridad}>
-										<Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-											{PRIORITY_CONFIG[prioridad as keyof typeof PRIORITY_CONFIG]?.icon}
-											{PRIORITY_CONFIG[prioridad as keyof typeof PRIORITY_CONFIG]?.label} ({items.length})
-										</Typography>
-										<Grid container spacing={2}>
-											{items.map((alerta) => (
-												<Grid item xs={12} sm={6} md={4} key={alerta.id_incapacidad}>
-													<AlertaCard
-														alerta={alerta}
-														onVer={() => handleVerIncapacidad(alerta.id_incapacidad)}
-													/>
-												</Grid>
-											))}
-										</Grid>
-									</Grid>
-								) : null
-							)}
+							{alertas.map((alerta) => (
+								<Grid item xs={12} sm={6} md={4} key={alerta.id_incapacidad}>
+									<AlertaCard
+										alerta={alerta}
+										onVer={() => handleVerIncapacidad(alerta.id_incapacidad)}
+									/>
+								</Grid>
+							))}
 						</Grid>
 					)}
 				</Box>

@@ -287,6 +287,7 @@ export interface Pago {
 	id_pago: number
 	id_incapacidad: number
 	id_entidad: number
+	nombre_entidad?: string
 	tipo_pago: TipoPago
 	estado_pago: EstadoPago
 	conciliado: boolean
@@ -396,11 +397,11 @@ export interface CarteraVencida {
 
 export interface AlertaVencimiento {
 	id_incapacidad: number
-	incapacidad: Incapacidad
+	incapacidad: { id: number; titulo: string } | Incapacidad
 	tipo_alerta: string
 	fecha_vencimiento: ISODate
 	dias_restantes: number
-	prioridad: 'alta' | 'media' | 'baja' | string
+	prioridad: 'Alto' | 'Medio' | 'Bajo' | 'Crítico' | string
 	mensaje: string
 }
 
