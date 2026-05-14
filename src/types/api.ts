@@ -162,6 +162,7 @@ export interface IncapacidadFilters {
 }
 
 export interface CreateIncapacidadRequest {
+	id_empleado: number
 	id_tipo: number
 	id_entidad: number
 	titulo: string
@@ -398,6 +399,7 @@ export interface CarteraVencida {
 export interface AlertaVencimiento {
 	id_incapacidad: number
 	incapacidad: { id: number; titulo: string } | Incapacidad
+	nombre_entidad: string
 	tipo_alerta: string
 	fecha_vencimiento: ISODate
 	dias_restantes: number

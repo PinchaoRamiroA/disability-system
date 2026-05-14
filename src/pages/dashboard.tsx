@@ -89,12 +89,12 @@ export default function DashboardPage() {
 	} | null>(null)
 	const [alertasVencimiento, setAlertasVencimiento] = useState<{
 		IDIncapacidad: number
-		IDEntidad: number
 		NombreEntidad: string
 		DiasVencido: number
 		Estado: string
 		TipoAlerta: string
 		FechaLimitePago: string
+		Mensaje: string
 	}[]>([])
 	const [recentIncapacidades, setRecentIncapacidades] = useState<Incapacidad[]>([])
 	const [estadoData, setEstadoData] = useState<{ id: string; label: string; value: number; color: string }[]>([])
@@ -174,13 +174,13 @@ export default function DashboardPage() {
 
 			if (alertasRes && alertasRes.data?.data) {
 				setAlertasVencimiento(alertasRes.data.data.map((a: any) => ({
-					IDIncapacidad: a.IDIncapacidad,
-					IDEntidad: a.IDEntidad,
-					NombreEntidad: a.NombreEntidad || 'Sin entidad',
-					DiasVencido: a.DiasVencido,
-					Estado: a.Estado,
-					TipoAlerta: a.TipoAlerta,
-					FechaLimitePago: a.FechaLimitePago,
+					IDIncapacidad: a.id_incapacidad,
+					NombreEntidad: a.nombre_entidad || 'Sin entidad',
+					DiasVencido: Math.abs(a.dias_restantes || 0),
+					Estado: a.Estado || 'Pendiente',
+					TipoAlerta: a.tipo_alerta,
+					FechaLimitePago: a.fecha_vencimiento,
+					Mensaje: a.mensaje,
 				})))
 				setAlertas(alertasRes.data.data.length)
 			}
@@ -399,11 +399,11 @@ export default function DashboardPage() {
 										<table style={{ width: '100%', borderCollapse: 'collapse' }}>
 											<thead>
 												<tr style={{ backgroundColor: '#f5f5f5' }}>
-													<th style={{ padding: '8px 12px', textAlign: 'left' }}>ID Incapacidad</th>
+													<th style={{ padding: '8px 12px', textAlign: 'left' }}>ID</th>
 													<th style={{ padding: '8px 12px', textAlign: 'left' }}>Entidad</th>
-													<th style={{ padding: '8px 12px', textAlign: 'center' }}>Días Vencido</th>
-													<th style={{ padding: '8px 12px', textAlign: 'center' }}>Tipo Alerta</th>
-													<th style={{ padding: '8px 12px', textAlign: 'left' }}>Estado</th>
+													<th style={{ padding: '8px 12px', textAlign: 'center' }}>Días</th>
+													<th style={{ padding: '8px 12px', textAlign: 'center' }}>Tipo</th>
+													<th style={{ padding: '8px 12px', textAlign: 'left' }}>Mensaje</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -413,7 +413,7 @@ export default function DashboardPage() {
 														<td style={{ padding: '8px 12px' }}>{a.NombreEntidad}</td>
 														<td style={{ padding: '8px 12px', textAlign: 'center' }}>
 															<Chip
-																label={a.DiasVencido}
+																label={`${a.DiasVencido} días`}
 																size="small"
 																color={a.DiasVencido > 90 ? 'error' : a.DiasVencido > 30 ? 'warning' : 'default'}
 															/>
@@ -425,7 +425,7 @@ export default function DashboardPage() {
 																color={a.TipoAlerta === 'Crítico' ? 'error' : 'warning'}
 															/>
 														</td>
-														<td style={{ padding: '8px 12px' }}>{a.Estado}</td>
+														<td style={{ padding: '8px 12px' }}>{a.Mensaje}</td>
 													</tr>
 												))}
 											</tbody>

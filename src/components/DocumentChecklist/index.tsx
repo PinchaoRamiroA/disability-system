@@ -5,9 +5,16 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import HelpIcon from '@mui/icons-material/Help'
 import { Documento } from '@/types/api'
 
+interface DocumentoRequerido {
+	id_tipo_documento: number
+	nombre: string
+	descripcion: string
+	requerido: boolean
+}
+
 interface DocumentChecklistProps {
 	tipoIncapacidad: number
-	documentosRequeridos: string[]
+	documentosRequeridos: DocumentoRequerido[] | string[]
 	documentosSubidos: Documento[]
 }
 
@@ -16,11 +23,16 @@ export const DocumentChecklist = ({
 	documentosRequeridos,
 	documentosSubidos,
 }: DocumentChecklistProps) => {
-	const uploadedTypes = documentosSubidos.map((d) => d.tipo)
+	const getDocName = (doc: DocumentoRequerido | string) =>
+		typeof doc === 'string' ? doc : doc.nombre
 
-	const getStatus = (requiredDoc: string) => {
+	const getDocCodigo = (doc: DocumentoRequerido | string) =>
+		typeof doc === 'string' ? doc : (doc as any).codigo || doc.nombre
+
+	const getStatus = (doc: DocumentoRequerido | string) => {
+		const codigo = getDocCodigo(doc)
 		const found = documentosSubidos.find(
-			(d) => d.tipo.toLowerCase() === requiredDoc.toLowerCase()
+			(d) => d.tipo === codigo || d.tipo.toLowerCase() === codigo.toLowerCase()
 		)
 		if (!found) return 'missing'
 		if (found.estado === 'validado') return 'valid'
@@ -100,14 +112,16 @@ export const DocumentChecklist = ({
 
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
 				{documentosRequeridos.map((doc) => {
+					const name = getDocName(doc)
+					const codigo = getDocCodigo(doc)
 					const status = getStatus(doc)
 					const uploadedDoc = documentosSubidos.find(
-						(d) => d.tipo.toLowerCase() === doc.toLowerCase()
+						(d) => d.tipo === codigo || d.tipo.toLowerCase() === codigo.toLowerCase()
 					)
 
 					return (
 						<Box
-							key={doc}
+							key={typeof doc === 'string' ? doc : doc.id_tipo_documento}
 							sx={{
 								display: 'flex',
 								alignItems: 'center',
@@ -147,7 +161,7 @@ export const DocumentChecklist = ({
 									<HelpIcon color="disabled" fontSize="small" />
 								)}
 								<Typography variant="body2" fontWeight={500}>
-									{doc}
+									{name}
 								</Typography>
 							</Box>
 							<Box>

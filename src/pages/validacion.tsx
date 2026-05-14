@@ -42,7 +42,7 @@ export default function ValidacionDocumentalPage() {
 	const [totalPages, setTotalPages] = useState(1)
 
 	const [selectedIncapacidad, setSelectedIncapacidad] = useState<Incapacidad | null>(null)
-	const [documentosRequeridos, setDocumentosRequeridos] = useState<string[]>([])
+	const [documentosRequeridos, setDocumentosRequeridos] = useState<{ id_tipo_documento: number; nombre: string; descripcion: string; requerido: boolean }[]>([])
 	const [documentosSubidos, setDocumentosSubidos] = useState<Documento[]>([])
 	const [docsLoading, setDocsLoading] = useState(false)
 	const [validateDialogOpen, setValidateDialogOpen] = useState(false)

@@ -97,9 +97,37 @@ export const getEntidades = async (): Promise<
 	return orchestratorWithAuthClient.get('/incapacidades/entidades')
 }
 
+export const uploadDocumento = async (
+	idIncapacidad: number,
+	tipo: string,
+	file: File
+): Promise<AxiosResponse<ApiResponse<Documento>>> => {
+	const formData = new FormData()
+	formData.append('file', file)
+	formData.append('tipo', tipo)
+
+	return orchestratorWithAuthClient.post(
+		`/incapacidades/${idIncapacidad}/documentos`,
+		formData,
+		{
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		}
+	)
+}
+
+export interface DocumentoRequerido {
+	id_tipo_documento: number
+	nombre: string
+	descripcion: string
+	requerido: boolean
+	codigo: string
+}
+
 export const getDocumentosRequeridos = async (
 	idTipo: number
-): Promise<AxiosResponse<ApiResponse<string[]>>> => {
+): Promise<AxiosResponse<ApiResponse<DocumentoRequerido[]>>> => {
 	return orchestratorWithAuthClient.get(
 		`/incapacidades/tipos/${idTipo}/documentos-requeridos`
 	)

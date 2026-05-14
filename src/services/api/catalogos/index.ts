@@ -7,6 +7,7 @@ export interface TipoDocumento {
 	nombre: string
 	descripcion: string
 	requerido: boolean
+	codigo: string
 }
 
 export interface EstadoDocumento {
