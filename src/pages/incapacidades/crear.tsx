@@ -126,8 +126,8 @@ export default function CrearIncapacidadPage() {
 			}
 			setSubmitting(true)
 			try {
-				const response = await createIncapacidad({
-					id_empleado: selectedEmpleado.id,
+				const payload = {
+					id_empleado: selectedEmpleado.id_usuario,
 					titulo: values.titulo,
 					id_tipo: values.id_tipo as number,
 					id_entidad: values.id_entidad as number,
@@ -136,7 +136,11 @@ export default function CrearIncapacidadPage() {
 					fecha_fin: values.fecha_fin,
 					fecha_radicacion: values.fecha_radicacion || undefined,
 					observaciones: values.observaciones || undefined,
-				})
+				}
+				console.log('selectedEmpleado:', selectedEmpleado)
+				console.log('Submitting incapacidad payload:', payload)
+				const response = await createIncapacidad(payload)
+				console.log('Create response:', response.data)
 
 				const incapacidadId = response.data.data.id_incapacidad
 				setCreatedIncapacidad({ id: incapacidadId })
@@ -177,10 +181,12 @@ export default function CrearIncapacidadPage() {
 	}
 
 	const selectEmpleado = (empelado: AuthUser) => {
+		console.log('Selecting empleado:', empelado)
+		const empleadoId = empelado.id_usuario
 		setSelectedEmpleado(empelado)
 		setEmpleados([])
 		setEmpleadoSearch('')
-		formik.setFieldValue('id_empleado',empelado.id)
+		formik.setFieldValue('id_empleado', empleadoId)
 	}
 
 	useEffect(() => {

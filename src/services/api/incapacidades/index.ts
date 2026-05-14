@@ -44,7 +44,10 @@ export const getIncapacidadById = async (
 export const createIncapacidad = async (
 	data: CreateIncapacidadRequest
 ): Promise<AxiosResponse<ApiResponse<Incapacidad>>> => {
-	return orchestratorWithAuthClient.post('/incapacidades', data)
+	console.log('Creating incapacidad with data:', data)
+	return orchestratorWithAuthClient.post('/incapacidades', data, {
+		paramsSerializer: (params) => new URLSearchParams(params).toString(),
+	})
 }
 
 export const updateIncapacidad = async (

@@ -11,6 +11,11 @@ const ACCESS_TOKEN_NAME = 'access_token'
 const REFRESH_TOKEN_NAME = 'refresh_token'
 
 let isRefreshTokenFetching = false
+let userLoggedOut = false
+
+export const setUserLoggedOut = (value: boolean) => {
+	userLoggedOut = value
+}
 
 const requireAuth = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
 	config.headers.set('Authorization', `Bearer ${localStorage.getItem(ACCESS_TOKEN_NAME)}`)
@@ -40,6 +45,12 @@ export function setupLoggingInterceptorsTo(
 
 			if (originalConfig?.url !== '/api/auth' && err.response) {
 				if (err.response.status === 401) {
+					const refreshTokenValue = localStorage.getItem(REFRESH_TOKEN_NAME)
+					if (!refreshTokenValue || userLoggedOut) {
+						userLoggedOut = false
+						return Promise.reject(err)
+					}
+
 					if (!isRefreshTokenFetching) {
 						isRefreshTokenFetching = true
 
@@ -51,6 +62,8 @@ export function setupLoggingInterceptorsTo(
 							.catch(() => {
 								localStorage.removeItem(ACCESS_TOKEN_NAME)
 								localStorage.removeItem(REFRESH_TOKEN_NAME)
+								userLoggedOut = false
+								isRefreshTokenFetching = false
 								window.location.href = '/login'
 								return
 							})

@@ -2,6 +2,7 @@ import { createAsyncThunk, createAction } from '@reduxjs/toolkit'
 import { Auth, normalizeAuthUser } from '@/types/auth'
 import * as api from '@/services/api/authentication'
 import { saveAuthToken, getAuthToken, clearAuthToken } from '@/utils/helpers/accessToken'
+import { setUserLoggedOut } from '@/services/api/utilities/interceptors'
 
 export const LOGOUT_ACTION_TYPE = 'auth/logout'
 
@@ -22,6 +23,7 @@ export const thunkLogin = createAsyncThunk<Auth, { email: string; password: stri
 
 export const thunkLogout = createAsyncThunk(LOGOUT_ACTION_TYPE, () => {
 	clearAuthToken()
+	setUserLoggedOut(true)
 	return null
 })
 

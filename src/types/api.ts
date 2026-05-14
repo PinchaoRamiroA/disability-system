@@ -37,7 +37,8 @@ export interface Role {
 }
 
 export interface AuthUser {
-	id: number
+	id?: number
+	id_usuario: number
 	nombre: string
 	correo: string
 	numero_celular: string
@@ -45,6 +46,8 @@ export interface AuthUser {
 	numero_documento: string
 	estado: boolean
 	rol: Role
+	id_rol?: number
+	nombre_rol?: string
 	created_at: ISODateTime
 }
 
