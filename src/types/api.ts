@@ -132,21 +132,23 @@ export type EstadoTranscripcion =
 	| string
 
 export interface Incapacidad {
-	id_incapacidad: number
-	id_usuario: number
-	canal_recepcion: CanalRecepcion
-	titulo: string
-	fecha_inicio: ISODate
-	fecha_fin: ISODate
-	origen: OrigenIncapacidad
-	fecha_radicacion?: ISODate | null
-	fecha_pago?: ISODate | null
-	observaciones?: string | null
-	estado: EstadoIncapacidad
-	tipo: TipoIncapacidad
-	entidad: Entidad
-	created_at: ISODateTime
-	updated_at: ISODateTime
+    id_incapacidad: number
+    id_usuario: number
+    canal_recepcion: CanalRecepcion
+    titulo: string
+    fecha_inicio: ISODate
+    fecha_fin: ISODate
+    origen: OrigenIncapacidad
+    fecha_radicacion?: ISODate | null
+    fecha_pago?: ISODate | null
+    observaciones?: string | null
+    estado: EstadoIncapacidad
+    tipo: TipoIncapacidad
+    entidad: Entidad
+    empleado?: AuthUser
+    documentos?: Documento[]
+    created_at: ISODateTime
+    updated_at: ISODateTime
 }
 
 export interface IncapacidadFilters {
