@@ -77,5 +77,5 @@ export const changeUserStatus = async (
 export const getRoles = async (): Promise<
 	AxiosResponse<ApiResponse<{ items: { id_rol: number; nombre: string; permisos: string[] }[] }>>
 > => {
-	return orchestratorWithAuthClient.get('/usuarios/roles')
+	return orchestratorWithAuthClient.get('/roles')
 }

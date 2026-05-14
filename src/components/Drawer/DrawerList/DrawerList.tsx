@@ -19,6 +19,7 @@ const menuItems: MenuItem[] = [
 	{ path: 'alertas', label: 'Alertas', permiso: 'consultar_incapacidad' },
 	{ path: 'reportes', label: 'Reportes', permiso: 'consultar_reportes' },
 	{ path: 'usuarios', label: 'Usuarios', permiso: 'gestionar_usuarios' },
+	{ path: 'roles', label: 'Roles y Permisos', permiso: 'gestionar_roles' },
 	{ path: 'configuracion', label: 'Configuración', permiso: 'gestionar_usuarios' },
 	{ path: 'auditoria', label: 'Auditoría', permiso: 'gestionar_usuarios' },
 ]

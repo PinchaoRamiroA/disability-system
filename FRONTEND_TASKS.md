@@ -213,21 +213,21 @@ El proyecto existente tiene infraestructura que se puede adaptar:
 - [x] 10.1.4 Bloquear/reset contraseña
 
 #### 10.2 Roles y Permisos
-- [ ] 10.2.1 Crear página /roles
-- [ ] 10.2.2 Matriz de permisos por módulo (ver, crear, editar, eliminar, aprobar)
-- [ ] 10.2.3 Integrar con el campo "rol.permisos" del login
+- [x] 10.2.1 Crear página /roles
+- [x] 10.2.2 Matriz de permisos por módulo (ver, crear, editar, eliminar, aprobar)
+- [x] 10.2.3 Integrar con el campo "rol.permisos" del login
 
 ---
 
 ### 🟡 PRIORIDAD 11 - CONFIGURACIÓN (Semana 6)
 
 #### 11.1 Parámetros del Sistema
-- [ ] 11.1.1 Crear página /configuracion
-- [ ] 11.1.2 Catálogos: estados, tipos incapacidad, entidades, tipos documento
-- [ ] 11.1.3 Configuración de alertas (días, tiempos vencimiento)
-- [ ] 11.1.4 Canales de recepción
-- [ ] 11.1.5 Correos de notificación
-- [ ] 11.1.6 Integrar GET /catalogos/* (tipos-documento, estados-documento, tipos-pago)
+- [x] 11.1.1 Crear página /configuracion
+- [x] 11.1.2 Catálogos: estados, tipos incapacidad, entidades, tipos documento, etc.
+- [x] 11.1.3 Configuración de alertas (días, tiempos vencimiento)
+- [x] 11.1.4 Canales de recepción
+- [x] 11.1.5 Correos de notificación
+- [x] 11.1.6 Integrar GET /catalogos/* (tipos-documento, estados-documento, tipos-pago)
 
 ---
 
