@@ -50,10 +50,8 @@ export const Appbar = ({ handleDrawerToggle }: Props) => {
 				>
 					<MenuIcon />
 				</IconButton>
-				<Link href="/dashboard" passHref>
-					<Box component="a">
-						<LogoOrg />
-					</Box>
+				<Link href="/dashboard" passHref legacyBehavior>
+					<LogoOrg />
 				</Link>
 
 				<Box

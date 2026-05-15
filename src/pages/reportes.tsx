@@ -119,7 +119,7 @@ export default function ReportesPage() {
 	const loadResumenEjecutivo = async () => {
 		try {
 			const res = await getResumenEjecutivo()
-			setResumen(res.data.data || null)
+			setResumen((res.data.data as any) || null)
 		} catch {
 		}
 	}

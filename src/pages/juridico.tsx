@@ -59,12 +59,25 @@ export default function JuridicoPage() {
 		)
 	}
 
-	const casos180 = casosCriticos.filter((c) => c.dias_vencidos > 180)
-	const casos90 = casosCriticos.filter((c) => c.dias_vencidos > 90 && c.dias_vencidos <= 180)
-	const casos60 = casosCriticos.filter((c) => c.dias_vencidos > 60 && c.dias_vencidos <= 90)
+	const getDiasVencidos = (c: CarteraVencida) => {
+		if ('dias_vencidos' in c) return (c as any).dias_vencidos || 0
+		if (c.fecha_pago) {
+			return dayjs().diff(dayjs(c.fecha_pago), 'day')
+		}
+		return 0
+	}
+
+	const getValorPendiente = (c: CarteraVencida) => {
+		if ('valor_pendiente' in c) return parseFloat((c as any).valor_pendiente || '0')
+		return parseFloat(c.valor || '0')
+	}
+
+	const casos180 = casosCriticos.filter((c) => getDiasVencidos(c) > 180)
+	const casos90 = casosCriticos.filter((c) => getDiasVencidos(c) > 90 && getDiasVencidos(c) <= 180)
+	const casos60 = casosCriticos.filter((c) => getDiasVencidos(c) > 60 && getDiasVencidos(c) <= 90)
 
 	const totalDeuda = casosCriticos.reduce(
-		(acc, c) => acc + parseFloat(c.valor_pendiente || '0'),
+		(acc, c) => acc + getValorPendiente(c),
 		0
 	)
 
@@ -89,13 +102,13 @@ export default function JuridicoPage() {
 							</Typography>
 							<Divider />
 							<Box sx={{ mt: 2 }}>
-								{casos90.map((caso) => (
-									<Box key={caso.id_incapacidad} sx={{ mb: 2 }}>
+								{casos180.map((caso) => (
+									<Box key={caso.id_pago || caso.id_incapacidad} sx={{ mb: 2 }}>
 										<Typography variant="body2" fontWeight={500}>
-											{caso.incapacidad?.titulo}
+											Incapacidad #{caso.id_incapacidad}
 										</Typography>
 										<Typography variant="body2" color="text.secondary">
-											{caso.entidad?.nombre} - ${parseFloat(caso.valor_pendiente).toLocaleString()}
+											{caso.nombre_entidad} - ${getValorPendiente(caso).toLocaleString()}
 										</Typography>
 									</Box>
 								))}
@@ -121,12 +134,12 @@ export default function JuridicoPage() {
 							<Divider />
 							<Box sx={{ mt: 2 }}>
 								{casos90.map((caso) => (
-									<Box key={caso.id_incapacidad} sx={{ mb: 2 }}>
+									<Box key={caso.id_pago || caso.id_incapacidad} sx={{ mb: 2 }}>
 										<Typography variant="body2" fontWeight={500}>
-											{caso.incapacidad?.titulo}
+											Incapacidad #{caso.id_incapacidad}
 										</Typography>
 										<Typography variant="body2" color="text.secondary">
-											{caso.entidad?.nombre} - ${parseFloat(caso.valor_pendiente).toLocaleString()}
+											{caso.nombre_entidad} - ${getValorPendiente(caso).toLocaleString()}
 										</Typography>
 									</Box>
 								))}
@@ -152,12 +165,12 @@ export default function JuridicoPage() {
 							<Divider />
 							<Box sx={{ mt: 2 }}>
 								{casos60.map((caso) => (
-									<Box key={caso.id_incapacidad} sx={{ mb: 2 }}>
+									<Box key={caso.id_pago || caso.id_incapacidad} sx={{ mb: 2 }}>
 										<Typography variant="body2" fontWeight={500}>
-											{caso.incapacidad?.titulo}
+											Incapacidad #{caso.id_incapacidad}
 										</Typography>
 										<Typography variant="body2" color="text.secondary">
-											{caso.entidad?.nombre} - ${parseFloat(caso.valor_pendiente).toLocaleString()}
+											{caso.nombre_entidad} - ${getValorPendiente(caso).toLocaleString()}
 										</Typography>
 									</Box>
 								))}
@@ -195,26 +208,28 @@ export default function JuridicoPage() {
 									</tr>
 								</thead>
 								<tbody>
-									{casosCriticos.map((caso) => (
-										<tr key={caso.id_incapacidad} style={{ borderBottom: '1px solid #eee' }}>
+									{casosCriticos.map((caso) => {
+										const dias = getDiasVencidos(caso)
+										return (
+										<tr key={caso.id_pago || caso.id_incapacidad} style={{ borderBottom: '1px solid #eee' }}>
 											<td style={{ padding: '12px' }}>{caso.id_incapacidad}</td>
-											<td style={{ padding: '12px' }}>{caso.incapacidad?.titulo}</td>
-											<td style={{ padding: '12px' }}>{caso.entidad?.nombre}</td>
+											<td style={{ padding: '12px' }}>#{caso.id_incapacidad}</td>
+											<td style={{ padding: '12px' }}>{caso.nombre_entidad}</td>
 											<td style={{ padding: '12px' }}>
-												${parseFloat(caso.valor_pendiente).toLocaleString()}
+												${getValorPendiente(caso).toLocaleString()}
 											</td>
 											<td style={{ padding: '12px' }}>
 												<Chip
-													label={`${caso.dias_vencidos} días`}
+													label={`${dias} días`}
 													size="small"
-													color={caso.dias_vencidos > 180 ? 'error' : caso.dias_vencidos > 90 ? 'warning' : 'info'}
+													color={dias > 180 ? 'error' : dias > 90 ? 'warning' : 'info'}
 												/>
 											</td>
 											<td style={{ padding: '12px' }}>
-												{dayjs(caso.fecha_vencimiento).format('DD/MM/YYYY')}
+												{caso.fecha_pago ? dayjs(caso.fecha_pago).format('DD/MM/YYYY') : '-'}
 											</td>
 										</tr>
-									))}
+									)})}
 								</tbody>
 							</table>
 						</Box>
