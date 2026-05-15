@@ -1,6 +1,6 @@
 import { createAxiosInstance } from './utils'
 
-export const API_URL = process.env.API_URL || 'http://localhost:8080/api/v1'
+export const API_URL = process.env.API_URL || 'https://disability-system-backend.onrender.com/'
 
 export const orchestratorClient = createAxiosInstance(API_URL, false)
 export const orchestratorWithAuthClient = createAxiosInstance(
