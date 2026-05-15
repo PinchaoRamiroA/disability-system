@@ -77,6 +77,11 @@ export default function ReportesPage() {
 	const [fechaInicio, setFechaInicio] = useState(dayjs().startOf('month').format('YYYY-MM-DD'))
 	const [fechaFin, setFechaFin] = useState(dayjs().endOf('month').format('YYYY-MM-DD'))
 	const [idEntidad, setIdEntidad] = useState<number | ''>('')
+	const [idTipo, setIdTipo] = useState<number | ''>('')
+	const [idEstado, setIdEstado] = useState<number | ''>('')
+	const [idEmpleado, setIdEmpleado] = useState<number | ''>('')
+	const [origen, setOrigen] = useState('')
+	const [periodo, setPeriodo] = useState('')
 
 	const [entidades, setEntidades] = useState<Entidad[]>([])
 	const [estados, setEstados] = useState<EstadoIncapacidad[]>([])
@@ -123,10 +128,15 @@ export default function ReportesPage() {
 		setGenerating(true)
 		try {
 			const res = await generateReporte({
-				tipo_reporte: tipoReporte as any,
+				tipo: tipoReporte,
 				fecha_inicio: fechaInicio,
 				fecha_fin: fechaFin,
-				id_entidad: idEntidad || undefined,
+				id_entidad: idEntidad ? Number(idEntidad) : undefined,
+				id_tipo: idTipo ? Number(idTipo) : undefined,
+				id_estado: idEstado ? Number(idEstado) : undefined,
+				id_empleado: idEmpleado ? Number(idEmpleado) : undefined,
+				origen: origen || undefined,
+				periodo: periodo || undefined,
 			})
 			setReporteData(res.data.data || null)
 			showSuccess('Reporte generado')
@@ -250,6 +260,74 @@ export default function ReportesPage() {
 									))}
 								</TextField>
 							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<TextField
+									select
+									label="Tipo"
+									value={idTipo}
+									onChange={(e) => setIdTipo(e.target.value === '' ? '' : Number(e.target.value))}
+									fullWidth
+									size="small"
+								>
+									<MenuItem value="">Todos</MenuItem>
+									{tipos.map((t) => (
+										<MenuItem key={t.id_tipo} value={t.id_tipo}>
+											{t.nombre}
+										</MenuItem>
+									))}
+								</TextField>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<TextField
+									select
+									label="Estado"
+									value={idEstado}
+									onChange={(e) => setIdEstado(e.target.value === '' ? '' : Number(e.target.value))}
+									fullWidth
+									size="small"
+								>
+									<MenuItem value="">Todos</MenuItem>
+									{estados.map((e) => (
+										<MenuItem key={e.id_estado} value={e.id_estado}>
+											{e.nombre}
+										</MenuItem>
+									))}
+								</TextField>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<TextField
+									select
+									label="Origen"
+									value={origen}
+									onChange={(e) => setOrigen(e.target.value)}
+									fullWidth
+									size="small"
+								>
+									<MenuItem value="">Todos</MenuItem>
+									<MenuItem value="comun">Común</MenuItem>
+									<MenuItem value="laboral">Laboral</MenuItem>
+								</TextField>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<TextField
+									label="Periodo"
+									placeholder="YYYY-MM"
+									value={periodo}
+									onChange={(e) => setPeriodo(e.target.value)}
+									fullWidth
+									size="small"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6} md={3}>
+								<TextField
+									label="ID Empleado"
+									type="number"
+									value={idEmpleado}
+									onChange={(e) => setIdEmpleado(e.target.value === '' ? '' : Number(e.target.value))}
+									fullWidth
+									size="small"
+								/>
+							</Grid>
 						</Grid>
 						<Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
 							<Button
@@ -335,6 +413,18 @@ export default function ReportesPage() {
 							<Card>
 								<CardContent>
 									<Typography variant="body2" color="text.secondary">
+										Total Incapacidades
+									</Typography>
+									<Typography variant="h4" fontWeight="bold">
+										{resumen.total_incapacidades}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4}>
+							<Card>
+								<CardContent>
+									<Typography variant="body2" color="text.secondary">
 										Incapacidades Activas
 									</Typography>
 									<Typography variant="h4" fontWeight="bold">
@@ -346,39 +436,11 @@ export default function ReportesPage() {
 						<Grid item xs={12} sm={6} md={4}>
 							<Card>
 								<CardContent>
-									<Typography variant="body2" color="text.secondary">Pendientes</Typography>
-									<Typography variant="h4" fontWeight="bold" color="warning.main">
-										{resumen.pendientes}
+									<Typography variant="body2" color="text.secondary">
+										Días Perdidos
 									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item xs={12} sm={6} md={4}>
-							<Card>
-								<CardContent>
-									<Typography variant="body2" color="text.secondary">Pagadas</Typography>
-									<Typography variant="h4" fontWeight="bold" color="success.main">
-										{resumen.pagadas}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item xs={12} sm={6} md={4}>
-							<Card>
-								<CardContent>
-									<Typography variant="body2" color="text.secondary">Rechazadas</Typography>
-									<Typography variant="h4" fontWeight="bold" color="error.main">
-										{resumen.rechazadas}
-									</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item xs={12} sm={6} md={4}>
-							<Card>
-								<CardContent>
-									<Typography variant="body2" color="text.secondary">Total Cartera</Typography>
 									<Typography variant="h4" fontWeight="bold">
-										${Number(resumen.total_cartera).toLocaleString()}
+										{resumen.total_dias_perdidos}
 									</Typography>
 								</CardContent>
 							</Card>
@@ -386,27 +448,67 @@ export default function ReportesPage() {
 						<Grid item xs={12} sm={6} md={4}>
 							<Card>
 								<CardContent>
-									<Typography variant="body2" color="text.secondary">Total Pagado</Typography>
+									<Typography variant="body2" color="text.secondary">
+										Pagos Pendientes
+									</Typography>
+									<Typography variant="h4" fontWeight="bold" color="warning.main">
+										{resumen.pagos_pendientes}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4}>
+							<Card>
+								<CardContent>
+									<Typography variant="body2" color="text.secondary">
+										Pagos Vencidos
+									</Typography>
+									<Typography variant="h4" fontWeight="bold" color="error.main">
+										{resumen.pagos_vencidos}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4}>
+							<Card>
+								<CardContent>
+									<Typography variant="body2" color="text.secondary">
+										Valor Cartera
+									</Typography>
+									<Typography variant="h4" fontWeight="bold">
+										${Number(resumen.total_valor_cartera).toLocaleString()}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4}>
+							<Card>
+								<CardContent>
+									<Typography variant="body2" color="text.secondary">
+										Valor Cobrado
+									</Typography>
 									<Typography variant="h4" fontWeight="bold" color="success.main">
-										${Number(resumen.total_pagado).toLocaleString()}
+										${Number(resumen.total_valor_cobrado).toLocaleString()}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item xs={12} sm={6} md={4}>
+							<Card>
+								<CardContent>
+									<Typography variant="body2" color="text.secondary">
+										Valor Pendiente
+									</Typography>
+									<Typography variant="h4" fontWeight="bold" color="warning.main">
+										${Number(resumen.total_valor_pendiente).toLocaleString()}
 									</Typography>
 								</CardContent>
 							</Card>
 						</Grid>
 						<Grid item xs={12}>
-							<Card sx={{ backgroundColor: 'warning.light' }}>
-								<CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-									<WarningIcon color="warning" />
-									<Box>
-										<Typography variant="body2" fontWeight={600}>
-											Alertas de Vencimiento
-										</Typography>
-										<Typography variant="h5" fontWeight="bold">
-											{resumen.alertas_vencimiento}
-										</Typography>
-									</Box>
-								</CardContent>
-							</Card>
+							<Typography variant="caption" color="text.secondary">
+								Fecha de generación: {dayjs(resumen.fecha_generacion).format('DD/MM/YYYY HH:mm')}
+							</Typography>
 						</Grid>
 					</Grid>
 				)}

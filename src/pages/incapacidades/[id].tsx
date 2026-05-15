@@ -11,7 +11,6 @@ import {
 	Tabs,
 	Tab,
 	Divider,
-	IconButton,
 	Dialog,
 	DialogTitle,
 	DialogContent,
@@ -40,6 +39,7 @@ import {
 import { usePermission } from '@/hooks/usePermission'
 import useNotifier from '@/hooks/useNotifier'
 import { PageLayout } from '@/components/layouts/PageLayout'
+import { StatusTimeline } from '@/components/StatusTimeline'
 import { StatusBadge } from '@/components/StatusBadge'
 import dayjs from 'dayjs'
 
@@ -97,7 +97,7 @@ export default function IncapacidadDetailPage() {
 		}
 	}, [id])
 
-const loadIncapacidadData = async () => {
+	const loadIncapacidadData = async () => {
 		setLoading(true)
 		try {
 			const [incRes, histRes, docsRes, plazosRes, estadosRes] = await Promise.all([
@@ -254,6 +254,21 @@ const loadIncapacidadData = async () => {
 				</CardContent>
 			</Card>
 
+			{estados.length > 0 && (
+				<Card sx={{ mb: 3 }}>
+					<CardContent>
+						<Typography variant="h6" gutterBottom>
+							Progreso
+						</Typography>
+						<StatusTimeline
+							statuses={estados}
+							currentStatusId={incapacidad.estado?.id_estado}
+							orientation="horizontal"
+						/>
+					</CardContent>
+				</Card>
+			)}
+
 			<Card sx={{ mb: 3 }}>
 				<CardContent>
 					<Typography variant="h6" gutterBottom>
@@ -350,8 +365,8 @@ const loadIncapacidadData = async () => {
 										(plazos as any).dias_transcurridos > 180
 											? 'error'
 											: (plazos as any).dias_transcurridos > 90
-											? 'warning'
-											: 'success'
+												? 'warning'
+												: 'success'
 									}
 								>
 									{(plazos as any).dias_transcurridos ?? '-'}
@@ -491,8 +506,8 @@ const loadIncapacidadData = async () => {
 															doc.estado === 'validado'
 																? 'success'
 																: doc.estado === 'rechazado'
-																? 'error'
-																: 'default'
+																	? 'error'
+																	: 'default'
 														}
 													/>
 												</td>

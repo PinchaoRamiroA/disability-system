@@ -11,11 +11,9 @@ import {
 	Button,
 	Grid,
 	Chip,
-	LinearProgress,
 	Alert,
 	Card,
 	CardContent,
-	IconButton,
 	Divider,
 } from '@mui/material'
 import { useFormik } from 'formik'
@@ -49,7 +47,7 @@ const CANAL_OPTIONS = [
 ]
 
 interface FormValues {
-	id_empleado: number | ''
+	id_usuario: number | ''
 	titulo: string
 	id_tipo: number | ''
 	id_entidad: number | ''
@@ -108,7 +106,7 @@ export default function CrearIncapacidadPage() {
 
 	const formik = useFormik<FormValues>({
 		initialValues: {
-			id_empleado: '',
+			id_usuario: '',
 			titulo: '',
 			id_tipo: '',
 			id_entidad: '',
@@ -127,7 +125,7 @@ export default function CrearIncapacidadPage() {
 			setSubmitting(true)
 			try {
 				const payload = {
-					id_empleado: selectedEmpleado.id_usuario,
+					id_usuario: selectedEmpleado.id_usuario,
 					titulo: values.titulo,
 					id_tipo: values.id_tipo as number,
 					id_entidad: values.id_entidad as number,
@@ -340,20 +338,20 @@ export default function CrearIncapacidadPage() {
 									)}
 
 									<Grid item xs={12}>
-							<Alert
-								severity={selectedEmpleado ? 'success' : 'warning'}
-								icon={selectedEmpleado ? <CheckCircleIcon /> : <SearchIcon />}
-								sx={{ mb: 2 }}
-							>
-								{selectedEmpleado ? (
-									<>
-										<strong>Empleado seleccionado:</strong> {selectedEmpleado.nombre} (C.C. {selectedEmpleado.numero_documento})
-									</>
-								) : (
-									'Busque y seleccione un empleado para continuar'
-								)}
-							</Alert>
-						</Grid>
+										<Alert
+											severity={selectedEmpleado ? 'success' : 'warning'}
+											icon={selectedEmpleado ? <CheckCircleIcon /> : <SearchIcon />}
+											sx={{ mb: 2 }}
+										>
+											{selectedEmpleado ? (
+												<>
+													<strong>Empleado seleccionado:</strong> {selectedEmpleado.nombre} (C.C. {selectedEmpleado.numero_documento})
+												</>
+											) : (
+												'Busque y seleccione un empleado para continuar'
+											)}
+										</Alert>
+									</Grid>
 								</CardContent>
 							</Card>
 						</Grid>

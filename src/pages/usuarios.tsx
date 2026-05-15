@@ -4,6 +4,7 @@ import {
 	getRoles,
 	updateUser,
 	changeUserStatus,
+	registerUser,
 	UserFilters,
 } from '@/services/api/usuarios'
 import { AuthUser, Role } from '@/types/api'
@@ -58,8 +59,20 @@ export default function UsuariosPage() {
 	const [totalPages, setTotalPages] = useState(1)
 	const [search, setSearch] = useState('')
 	const [editDialogOpen, setEditDialogOpen] = useState(false)
+	const [createDialogOpen, setCreateDialogOpen] = useState(false)
 	const [selectedUser, setSelectedUser] = useState<AuthUser | null>(null)
 	const [newRole, setNewRole] = useState<number | ''>('')
+
+	const [newUser, setNewUser] = useState({
+		nombre: '',
+		correo: '',
+		password: '',
+		numero_documento: '',
+		numero_celular: '',
+		direccion: '',
+		id_rol: '' as number | '',
+	})
+	const [creating, setCreating] = useState(false)
 
 	const canManageUsers =
 		hasPermission('gestionar_usuarios') || hasPermission('gestionar_roles')
@@ -124,6 +137,41 @@ export default function UsuariosPage() {
 		}
 	}
 
+	const handleCreateUser = async () => {
+		if (!newUser.nombre || !newUser.correo || !newUser.password || !newUser.numero_documento || !newUser.id_rol) {
+			showError('Por favor complete todos los campos requeridos')
+			return
+		}
+		setCreating(true)
+		try {
+			await registerUser({
+				nombre: newUser.nombre,
+				correo: newUser.correo,
+				password: newUser.password,
+				numero_documento: newUser.numero_documento,
+				numero_celular: newUser.numero_celular,
+				direccion: newUser.direccion,
+				id_rol: Number(newUser.id_rol),
+			})
+			showSuccess('Usuario creado correctamente')
+			setCreateDialogOpen(false)
+			setNewUser({
+				nombre: '',
+				correo: '',
+				password: '',
+				numero_documento: '',
+				numero_celular: '',
+				direccion: '',
+				id_rol: '',
+			})
+			fetchUsers()
+		} catch (error) {
+			showError('Error al crear usuario')
+		} finally {
+			setCreating(false)
+		}
+	}
+
 	if (!canManageUsers) {
 		return (
 			<PageLayout title="Usuarios">
@@ -136,7 +184,7 @@ export default function UsuariosPage() {
 
 	return (
 		<PageLayout title="Gestión de Usuarios">
-			<Box sx={{ mb: 3 }}>
+			<Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<TextField
 					label="Buscar usuario"
 					variant="outlined"
@@ -148,6 +196,13 @@ export default function UsuariosPage() {
 					}}
 					sx={{ mr: 2, width: 300 }}
 				/>
+				<Button
+					variant="contained"
+					startIcon={<AddIcon />}
+					onClick={() => setCreateDialogOpen(true)}
+				>
+					Crear Usuario
+				</Button>
 			</Box>
 
 			<TableContainer component={Paper}>
@@ -170,7 +225,7 @@ export default function UsuariosPage() {
 								<TableCell>{user.numero_documento}</TableCell>
 								<TableCell>
 									<Chip
-										label={user.rol?.nombre || '-'}
+										label={user.nombre_rol || '-'}
 										size="small"
 										color="primary"
 										variant="outlined"
@@ -246,6 +301,87 @@ export default function UsuariosPage() {
 					</Button>
 					<Button onClick={handleSaveRole} variant="contained">
 						Guardar
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={createDialogOpen}
+				onClose={() => setCreateDialogOpen(false)}
+				maxWidth="sm"
+				fullWidth
+			>
+				<DialogTitle>Crear Nuevo Usuario</DialogTitle>
+				<DialogContent>
+					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+						<TextField
+							label="Nombre completo"
+							value={newUser.nombre}
+							onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
+							fullWidth
+							required
+						/>
+						<TextField
+							label="Correo"
+							type="email"
+							value={newUser.correo}
+							onChange={(e) => setNewUser({ ...newUser, correo: e.target.value })}
+							fullWidth
+							required
+						/>
+						<TextField
+							label="Número de documento"
+							value={newUser.numero_documento}
+							onChange={(e) => setNewUser({ ...newUser, numero_documento: e.target.value })}
+							fullWidth
+							required
+						/>
+						<TextField
+							label="Número de celular"
+							value={newUser.numero_celular}
+							onChange={(e) => setNewUser({ ...newUser, numero_celular: e.target.value })}
+							fullWidth
+						/>
+						<TextField
+							label="Dirección"
+							value={newUser.direccion}
+							onChange={(e) => setNewUser({ ...newUser, direccion: e.target.value })}
+							fullWidth
+						/>
+						<TextField
+							label="Contraseña"
+							type="password"
+							value={newUser.password}
+							onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+							fullWidth
+							required
+						/>
+						<FormControl fullWidth required>
+							<InputLabel>Rol</InputLabel>
+							<Select
+								value={newUser.id_rol}
+								label="Rol"
+								onChange={(e) => setNewUser({ ...newUser, id_rol: e.target.value as number })}
+							>
+								{roles.map((rol) => (
+									<MenuItem key={rol.id_rol} value={rol.id_rol}>
+										{rol.nombre}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setCreateDialogOpen(false)} disabled={creating}>
+						Cancelar
+					</Button>
+					<Button
+						onClick={handleCreateUser}
+						variant="contained"
+						disabled={creating}
+					>
+						{creating ? 'Creando...' : 'Crear'}
 					</Button>
 				</DialogActions>
 			</Dialog>

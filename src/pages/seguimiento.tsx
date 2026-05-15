@@ -232,27 +232,33 @@ export default function SeguimientoPage() {
 							<table style={{ width: '100%', borderCollapse: 'collapse' }}>
 								<thead>
 									<tr style={{ backgroundColor: '#f5f5f5' }}>
-										<th style={{ padding: '12px' }}>ID</th>
+										<th style={{ padding: '12px' }}>ID Pago</th>
 										<th style={{ padding: '12px' }}>Incapacidad</th>
 										<th style={{ padding: '12px' }}>Entidad</th>
-										<th style={{ padding: '12px' }}>Valor Pendiente</th>
-										<th style={{ padding: '12px' }}>Días Vencido</th>
+										<th style={{ padding: '12px' }}>Tipo</th>
+										<th style={{ padding: '12px' }}>Valor</th>
+										<th style={{ padding: '12px' }}>Fecha Pago</th>
+										<th style={{ padding: '12px' }}>Estado</th>
 									</tr>
 								</thead>
 								<tbody>
 									{casosVencidos.map((caso) => (
-										<tr key={caso.id_incapacidad} style={{ borderBottom: '1px solid #eee' }}>
-											<td style={{ padding: '12px' }}>{caso.id_incapacidad}</td>
-											<td style={{ padding: '12px' }}>{caso.incapacidad?.titulo}</td>
-											<td style={{ padding: '12px' }}>{caso.entidad?.nombre}</td>
+										<tr key={caso.id_pago} style={{ borderBottom: '1px solid #eee' }}>
+											<td style={{ padding: '12px' }}>{caso.id_pago}</td>
+											<td style={{ padding: '12px' }}>#{caso.id_incapacidad}</td>
+											<td style={{ padding: '12px' }}>{caso.nombre_entidad}</td>
+											<td style={{ padding: '12px' }}>{caso.tipo_pago}</td>
 											<td style={{ padding: '12px' }}>
-												${parseFloat(caso.valor_pendiente).toLocaleString()}
+												${parseFloat(caso.valor).toLocaleString()}
+											</td>
+											<td style={{ padding: '12px' }}>
+												{caso.fecha_pago ? dayjs(caso.fecha_pago).format('DD/MM/YYYY') : '-'}
 											</td>
 											<td style={{ padding: '12px' }}>
 												<Chip
-													label={`${caso.dias_vencidos} días`}
+													label={caso.estado_pago}
 													size="small"
-													color="error"
+													color={caso.estado_pago === 'Pendiente' ? 'warning' : 'default'}
 												/>
 											</td>
 										</tr>

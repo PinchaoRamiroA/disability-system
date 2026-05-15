@@ -20,7 +20,7 @@ export interface UpdateUserRequest {
 
 export interface RegisterUserRequest {
 	nombre: string
-	email: string
+	correo: string
 	password: string
 	numero_documento: string
 	numero_celular: string

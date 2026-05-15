@@ -135,23 +135,23 @@ export type EstadoTranscripcion =
 	| string
 
 export interface Incapacidad {
-    id_incapacidad: number
-    id_usuario: number
-    canal_recepcion: CanalRecepcion
-    titulo: string
-    fecha_inicio: ISODate
-    fecha_fin: ISODate
-    origen: OrigenIncapacidad
-    fecha_radicacion?: ISODate | null
-    fecha_pago?: ISODate | null
-    observaciones?: string | null
-    estado: EstadoIncapacidad
-    tipo: TipoIncapacidad
-    entidad: Entidad
-    empleado?: AuthUser
-    documentos?: Documento[]
-    created_at: ISODateTime
-    updated_at: ISODateTime
+	id_incapacidad: number
+	id_usuario: number
+	canal_recepcion: CanalRecepcion
+	titulo: string
+	fecha_inicio: ISODate
+	fecha_fin: ISODate
+	origen: OrigenIncapacidad
+	fecha_radicacion?: ISODate | null
+	fecha_pago?: ISODate | null
+	observaciones?: string | null
+	estado: EstadoIncapacidad
+	tipo: TipoIncapacidad
+	entidad: Entidad
+	empleado?: AuthUser
+	documentos?: Documento[]
+	created_at: ISODateTime
+	updated_at: ISODateTime
 }
 
 export interface IncapacidadFilters {
@@ -167,7 +167,7 @@ export interface IncapacidadFilters {
 }
 
 export interface CreateIncapacidadRequest {
-	id_empleado: number
+	id_usuario: number
 	id_tipo: number
 	id_entidad: number
 	titulo: string
@@ -393,12 +393,17 @@ export interface ResumenEntidad {
 }
 
 export interface CarteraVencida {
+	id_pago: number
 	id_incapacidad: number
-	incapacidad: Incapacidad
-	entidad: Entidad
-	valor_pendiente: DecimalString
-	dias_vencidos: number
-	fecha_vencimiento: ISODate
+	id_entidad: number
+	nombre_entidad: string
+	tipo_pago: string
+	estado_pago: string
+	descripcion: string
+	valor: string
+	fecha_pago: string | null
+	periodo_contable: string
+	conciliado: boolean
 }
 
 export interface AlertaVencimiento {
@@ -482,11 +487,15 @@ export type TiposPagoResponse = ApiResponse<CatalogoItem[]>
 export type TipoReporte = 'incapacidades' | 'ausentismo' | 'cartera' | string
 
 export interface GenerateReporteRequest {
-	tipo_reporte: TipoReporte
-	fecha_inicio: ISODate
-	fecha_fin: ISODate
+	tipo: string
+	fecha_inicio: string
+	fecha_fin: string
 	id_entidad?: number
-	agrupar_por?: string
+	id_tipo?: number
+	id_estado?: number
+	id_empleado?: number
+	origen?: string
+	periodo?: string
 }
 
 export interface ReporteEntidadRequest {
@@ -504,13 +513,15 @@ export interface ReporteData {
 }
 
 export interface ResumenEjecutivo {
+	fecha_generacion: string
 	incapacidades_activas: number
-	pendientes: number
-	pagadas: number
-	rechazadas: number
-	total_cartera: DecimalString
-	total_pagado: DecimalString
-	alertas_vencimiento: number
+	pagos_pendientes: number
+	pagos_vencidos: number
+	total_dias_perdidos: number
+	total_incapacidades: number
+	total_valor_cartera: string
+	total_valor_cobrado: string
+	total_valor_pendiente: string
 }
 
 export interface ReporteVencimientosFilters {
