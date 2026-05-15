@@ -12,7 +12,6 @@
 		"e2e": "start-server-and-test dev http://localhost:3000 cy",
 		"e2e:headless": "start-server-and-test dev http://localhost:3000 cy:run",
 		"test": "jest",
-		"prepare": "husky install",
 		"analyze": "cross-env ANALYZE=true next build"
 	},
 	"dependencies": {
