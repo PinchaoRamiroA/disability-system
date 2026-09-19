@@ -32,6 +32,7 @@ export type AuthState = {
     tokenType: string | null
     expiresIn: number | null
     isAuthenticated: boolean
+    isInitialized: boolean
     isLoading: boolean
     error: string | null
 }

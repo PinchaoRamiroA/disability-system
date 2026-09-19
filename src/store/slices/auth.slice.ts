@@ -6,17 +6,14 @@ import type { User } from '@/contracts/auth'
 import axios from 'axios'
 
 const getInitialState = (): AuthState => {
-    const accessToken = tokenStorage.getAccessToken()
-    const refreshToken = tokenStorage.getRefreshToken()
-    const user = tokenStorage.getUser()
-
     return {
-        user,
-        accessToken,
-        refreshToken,
+        user: null,
+        accessToken: null,
+        refreshToken: null,
         tokenType: 'Bearer',
         expiresIn: null,
-        isAuthenticated: Boolean(accessToken && user),
+        isAuthenticated: false,
+        isInitialized: false,
         isLoading: false,
         error: null,
     }
@@ -93,6 +90,7 @@ export const authSlice = createSlice({
             state.tokenType = action.payload.tokenType || 'Bearer'
             state.expiresIn = action.payload.expiresIn || null
             state.isAuthenticated = true
+            state.isInitialized = true
             state.error = null
             tokenStorage.setAuthSession({
                 accessToken: action.payload.accessToken,
@@ -120,6 +118,7 @@ export const authSlice = createSlice({
             state.tokenType = null
             state.expiresIn = null
             state.isAuthenticated = false
+            state.isInitialized = true
             state.error = null
             authService.logout()
         },
@@ -137,6 +136,7 @@ export const authSlice = createSlice({
             state.refreshToken = refreshToken
             state.user = user
             state.isAuthenticated = Boolean(accessToken && user)
+            state.isInitialized = true
         },
     },
     extraReducers: (builder) => {
@@ -154,10 +154,12 @@ export const authSlice = createSlice({
                 state.tokenType = action.payload.token_type
                 state.expiresIn = action.payload.expires_in
                 state.isAuthenticated = true
+                state.isInitialized = true
                 state.error = null
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.isLoading = false
+                state.isInitialized = true
                 state.error = (action.payload as string) || 'Error desconocido'
             })
 
@@ -188,6 +190,7 @@ export const authSlice = createSlice({
                 state.accessToken = null
                 state.refreshToken = null
                 state.isAuthenticated = false
+                state.isInitialized = true
             })
     },
 })

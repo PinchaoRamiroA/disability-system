@@ -17,10 +17,10 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 1.1.6 Manejo de 401 (refresh token o logout)
 
 #### 1.2 Layout Principal
-- [ ] 1.2.1 Adaptar Sidebar/Navigation para nuevo menú según arquitectura de navegación
-- [ ] 1.2.2 Crear estructura de rutas (Next.js pages o App Router)
-- [ ] 1.2.3 Implementar ProtectedRoute (verificar auth antes de acceso)
-- [ ] 1.2.4 Crear menú lateral con módulos del sistema
+- [x] 1.2.1 Adaptar Sidebar/Navigation para nuevo menú según arquitectura de navegación
+- [x] 1.2.2 Crear estructura de rutas (Next.js pages o App Router)
+- [x] 1.2.3 Implementar ProtectedRoute (verificar auth antes de acceso)
+- [x] 1.2.4 Crear menú lateral con módulos del sistema
 
 ---
 

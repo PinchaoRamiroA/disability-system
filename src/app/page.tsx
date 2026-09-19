@@ -23,7 +23,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 
 export default function HomePage() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isInitialized, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('todos');
 
@@ -261,7 +261,7 @@ export default function HomePage() {
 
             {/* User Session or Login Button */}
             <div className="flex items-center gap-3 pl-2 border-l border-[#334155]/60">
-              {isAuthenticated && user ? (
+              {isInitialized && isAuthenticated && user ? (
                 <div className="flex items-center gap-3">
                   <div className="text-right hidden sm:block">
                     <div className="text-xs font-semibold text-white leading-none">

@@ -19,6 +19,7 @@ export function useAuth() {
         tokenType,
         expiresIn,
         isAuthenticated,
+        isInitialized,
         isLoading,
         error,
     } = useAppSelector((state) => state.auth)
@@ -73,6 +74,7 @@ export function useAuth() {
         tokenType,
         expiresIn,
         isAuthenticated,
+        isInitialized,
         isLoading,
         error,
         login: handleLogin,
