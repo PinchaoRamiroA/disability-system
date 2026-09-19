@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useFormik } from 'formik'
@@ -147,6 +147,15 @@ export default function CrearIncapacidadPage() {
     const router = useRouter()
     const { user } = useAuth()
 
+    const canManageOthers = useMemo(() => {
+        if (!user) return false
+        const role = user.rol?.nombre || ''
+        const allowedRoles = ['Administrador', 'admin', 'Gestión Humana', 'SG-SST', 'Recepcionista']
+        if (allowedRoles.includes(role)) return true
+        const permisos = user.rol?.permisos || []
+        return permisos.includes('gestionar_usuarios') || permisos.includes('editar_incapacidad')
+    }, [user])
+
     const [tipos, setTipos] = useState<TipoIncapacidad[]>([])
     const [entidades, setEntidades] = useState<Entidad[]>([])
     const [usuarios, setUsuarios] = useState<UserContract[]>([])
@@ -155,26 +164,27 @@ export default function CrearIncapacidadPage() {
     const [serverError, setServerError] = useState<string | null>(null)
     const [isSuccess, setIsSuccess] = useState(false)
 
-    // Load dynamic catalogs & users
+    // Load dynamic catalogs & users (only load users if canManageOthers to protect personal data)
     useEffect(() => {
         let isMounted = true
         async function loadCatalogs() {
             try {
-                const [tiposData, entidadesData, usuariosData] = await Promise.all([
+                const fetchPromises: [Promise<TipoIncapacidad[]>, Promise<Entidad[]>, Promise<UserContract[]>] = [
                     getTipos(),
                     getEntidades(),
-                    getUsuarios(),
-                ])
+                    canManageOthers ? getUsuarios() : Promise.resolve([]),
+                ]
+                const [tiposData, entidadesData, usuariosData] = await Promise.all(fetchPromises)
                 if (isMounted) {
                     setTipos(tiposData.length > 0 ? tiposData : FALLBACK_TIPOS)
                     setEntidades(entidadesData.length > 0 ? entidadesData : FALLBACK_ENTIDADES)
-                    setUsuarios(usuariosData.length > 0 ? usuariosData : FALLBACK_USUARIOS)
+                    setUsuarios(canManageOthers && usuariosData.length > 0 ? usuariosData : (canManageOthers ? FALLBACK_USUARIOS : []))
                 }
             } catch {
                 if (isMounted) {
                     setTipos(FALLBACK_TIPOS)
                     setEntidades(FALLBACK_ENTIDADES)
-                    setUsuarios(FALLBACK_USUARIOS)
+                    setUsuarios(canManageOthers ? FALLBACK_USUARIOS : [])
                 }
             } finally {
                 if (isMounted) {
@@ -186,7 +196,7 @@ export default function CrearIncapacidadPage() {
         return () => {
             isMounted = false
         }
-    }, [])
+    }, [canManageOthers])
 
     // Initial dates generated safely inside useState lazy initializer
     const [initialDates] = useState(() => {
@@ -275,7 +285,15 @@ export default function CrearIncapacidadPage() {
         },
     })
 
+    // Sincronizar id_usuario con el usuario autenticado cuando no tiene permisos de gestionar terceros
+    useEffect(() => {
+        if (user?.id && (!canManageOthers || registroModo === 'propio')) {
+            formik.setFieldValue('id_usuario', user.id)
+        }
+    }, [user?.id, canManageOthers, registroModo])
+
     const handleModoChange = (modo: 'propio' | 'colaborador') => {
+        if (!canManageOthers) return
         setRegistroModo(modo)
         if (modo === 'propio') {
             formik.setFieldValue('id_usuario', user?.id || 1)
@@ -382,37 +400,41 @@ export default function CrearIncapacidadPage() {
                                 <span>1. Colaborador / Paciente Afectado</span>
                             </div>
                             <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                                {registroModo === 'propio' ? 'Auto-radicación' : 'Radicación por Delegación'}
+                                {!canManageOthers
+                                    ? 'Auto-radicación personal'
+                                    : (registroModo === 'propio' ? 'Auto-radicación' : 'Radicación por Delegación')}
                             </span>
                         </div>
 
-                        {/* Modo Selector */}
-                        <div className="grid grid-cols-2 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
-                            <button
-                                type="button"
-                                onClick={() => handleModoChange('propio')}
-                                className={`py-2 text-xs font-semibold rounded-lg transition ${
-                                    registroModo === 'propio'
-                                        ? 'bg-blue-600 text-white shadow'
-                                        : 'text-[#94a3b8] hover:text-white'
-                                }`}
-                            >
-                                Registrar a mi nombre
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handleModoChange('colaborador')}
-                                className={`py-2 text-xs font-semibold rounded-lg transition ${
-                                    registroModo === 'colaborador'
-                                        ? 'bg-blue-600 text-white shadow'
-                                        : 'text-[#94a3b8] hover:text-white'
-                                }`}
-                            >
-                                Registrar para un Colaborador
-                            </button>
-                        </div>
+                        {/* Modo Selector (Solo administradores y gestores autorizados) */}
+                        {canManageOthers && (
+                            <div className="grid grid-cols-2 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
+                                <button
+                                    type="button"
+                                    onClick={() => handleModoChange('propio')}
+                                    className={`py-2 text-xs font-semibold rounded-lg transition ${
+                                        registroModo === 'propio'
+                                            ? 'bg-blue-600 text-white shadow'
+                                            : 'text-[#94a3b8] hover:text-white'
+                                    }`}
+                                >
+                                    Registrar a mi nombre
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleModoChange('colaborador')}
+                                    className={`py-2 text-xs font-semibold rounded-lg transition ${
+                                        registroModo === 'colaborador'
+                                            ? 'bg-blue-600 text-white shadow'
+                                            : 'text-[#94a3b8] hover:text-white'
+                                    }`}
+                                >
+                                    Registrar para un Colaborador
+                                </button>
+                            </div>
+                        )}
 
-                        {registroModo === 'propio' ? (
+                        {(!canManageOthers || registroModo === 'propio') ? (
                             <div className="p-4 rounded-xl bg-[#0f172a] border border-[#334155] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div className="space-y-1">
                                     <span className="text-xs text-[#94a3b8] block">Colaborador en sesión:</span>
