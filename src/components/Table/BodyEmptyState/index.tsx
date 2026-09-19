@@ -1,1 +1,0 @@
-export { BodyEmptyState } from './BodyEmptyState'

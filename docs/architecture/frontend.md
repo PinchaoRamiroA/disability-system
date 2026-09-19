@@ -6,7 +6,6 @@
 - **Routing**: App Router with Server Components
 - **Styling**: TailwindCSS + CSS variables for theming
 - **Forms**: React Hook Form + Zod
-- **Tables**: TanStack Table
 
 ## Architecture Principles
 
@@ -16,26 +15,8 @@
 
 ## Folder Structure
 
-```
-src/
-├── app/                    # Next.js App Router pages
-├── components/
-│   ├── ui/                 # Base UI components
-│   ├── layouts/             # Layout components
-│   ├── dashboard/          # Dashboard components
-│   ├── medical-leaves/     # Medical leaves domain
-│   ├── documents/          # Documents domain
-│   ├── payments/           # Payments domain
-│   └── shared/             # Shared components
-├── services/               # API services
-├── hooks/                  # Custom hooks
-├── store/                  # State management
-├── types/                  # TypeScript types
-├── utils/                  # Utility functions
-├── |── constants/          # Constants
-├── |── helpers/            # Helpers
-└── validators/            # Zod validators
-```
+- accord to framewrok next js 16 
+
 
 ## State Management
 

@@ -1,1 +1,0 @@
-export { FixedPagination } from './FixedPagination'
