@@ -1,5 +1,5 @@
 ---
-name: MedFlow Healthcare Dark
+name: Disability System Dark
 description: Modern enterprise healthcare SaaS design system focused on medical leave and disability management.
 version: 1.0.0
 
@@ -105,7 +105,7 @@ layout:
 
 ## Overview
 
-MedFlow Healthcare Dark is a modern enterprise healthcare SaaS design system focused on:
+Disability System Dark is a modern enterprise healthcare SaaS design system focused on:
 
 - medical leave management
 - disability tracking

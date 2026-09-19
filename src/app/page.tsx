@@ -202,7 +202,7 @@ export default function HomePage() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-lg tracking-tight text-white">MedFlow</span>
+                  <span className="font-bold text-lg tracking-tight text-white">Disability System</span>
                   <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
                     Enterprise
                   </span>
@@ -373,7 +373,7 @@ export default function HomePage() {
             <div>
               <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                 <FolderOpen className="h-5 w-5 text-blue-400" />
-                <span>Módulos de la Plataforma (MedFlow Core)</span>
+                <span>Módulos de la Plataforma (Disability System Core)</span>
               </h2>
               <p className="text-xs text-[#94a3b8] mt-0.5">
                 Estructura alineada con FRONTEND_TASKS.md y contratos tipados en contracts/
@@ -564,7 +564,7 @@ export default function HomePage() {
               <span className="text-[10px] text-[#94a3b8] uppercase tracking-wider font-semibold">
                 Sistema de Diseño
               </span>
-              <div className="text-sm font-bold text-white mt-1">MedFlow Healthcare Dark</div>
+              <div className="text-sm font-bold text-white mt-1">Disability System Dark</div>
               <p className="text-xs text-[#94a3b8] mt-1">
                 Colores oficiales, tokens HSL/HEX, tipografía Inter y sombras suaves.
               </p>
@@ -587,7 +587,7 @@ export default function HomePage() {
       <footer className="border-t border-[#334155]/60 bg-[#0f172a] py-6 px-6 mt-12">
         <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#94a3b8]">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-white">MedFlow Enterprise</span>
+            <span className="font-semibold text-white">Disability System Enterprise</span>
             <span>—</span>
             <span>Sistema Integral de Gestión de Incapacidades y Salud Ocupacional</span>
           </div>

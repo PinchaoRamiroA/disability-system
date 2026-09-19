@@ -48,7 +48,7 @@ export function ProtectedRoute({
                     </div>
                     <div className="text-center space-y-1">
                         <h2 className="text-sm font-medium text-white tracking-wide">
-                            MedFlow Enterprise
+                            Disability System Enterprise
                         </h2>
                         <p className="text-xs text-[#94a3b8]">
                             Verificando autorización y credenciales de acceso...

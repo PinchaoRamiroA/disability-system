@@ -193,7 +193,7 @@ export function Sidebar({ isOpenMobile, onCloseMobile }: SidebarProps) {
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1.5">
                                 <span className="font-bold text-base tracking-tight text-white">
-                                    MedFlow
+                                    Disability System
                                 </span>
                                 <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
                                     SaaS

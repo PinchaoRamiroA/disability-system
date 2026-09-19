@@ -145,7 +145,7 @@ function AuthForm() {
     const handleDemoFill = () => {
         if (activeTab === 'login') {
             setLoginForm({
-                email: 'admin@medflow.com',
+                email: 'admin@disabilitysystem.com',
                 password: 'password123',
             })
         } else {
@@ -177,7 +177,7 @@ function AuthForm() {
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
-                                <span className="font-extrabold text-xl tracking-tight text-white">MedFlow</span>
+                                <span className="font-extrabold text-xl tracking-tight text-white">Disability System</span>
                                 <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
                                     Enterprise
                                 </span>
@@ -227,7 +227,7 @@ function AuthForm() {
 
                 {/* Footer Meta */}
                 <div className="relative z-10 flex items-center justify-between text-xs text-[#94a3b8] pt-6 border-t border-[#334155]/40">
-                    <span>© 2026 MedFlow Inc.</span>
+                    <span>© 2026 Disability System Inc.</span>
                     <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
                         <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                         API v1 en línea
@@ -244,7 +244,7 @@ function AuthForm() {
                             <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
                                 <Activity className="h-4 w-4" />
                             </div>
-                            <span className="font-bold text-base text-white">MedFlow</span>
+                            <span className="font-bold text-base text-white">Disability System</span>
                         </Link>
                         <span className="text-xs text-emerald-400 font-medium">API v1 Online</span>
                     </div>
@@ -341,7 +341,7 @@ function AuthForm() {
                                             onChange={(e) =>
                                                 setLoginForm({ ...loginForm, email: e.target.value })
                                             }
-                                            placeholder="ejemplo@medflow.com"
+                                            placeholder="ejemplo@disabilitysystem.com"
                                             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0f172a] border border-[#334155] text-sm text-white placeholder-[#94a3b8] focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
                                             required
                                         />

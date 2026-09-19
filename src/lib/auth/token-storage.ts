@@ -1,8 +1,8 @@
 import type { User } from '@/contracts/auth'
 
-const ACCESS_TOKEN_KEY = 'medflow_access_token'
-const REFRESH_TOKEN_KEY = 'medflow_refresh_token'
-const USER_KEY = 'medflow_user'
+const ACCESS_TOKEN_KEY = 'disability_access_token'
+const REFRESH_TOKEN_KEY = 'disability_refresh_token'
+const USER_KEY = 'disability_user'
 
 export const tokenStorage = {
     getAccessToken(): string | null {

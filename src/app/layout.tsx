@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'MedFlow | Sistema de Gestión de Incapacidades',
+  title: 'Disability System | Sistema de Gestión de Incapacidades',
   description:
     'Plataforma integral enterprise para la administración, transcripción y cobro de incapacidades médicas.',
   keywords: [

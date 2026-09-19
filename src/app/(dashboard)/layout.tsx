@@ -3,8 +3,8 @@ import { AppLayout } from '@/components/layout/AppLayout'
 
 export const metadata: Metadata = {
     title: {
-        template: '%s | MedFlow',
-        default: 'MedFlow | Sistema de Gestión de Incapacidades',
+        template: '%s | Disability System',
+        default: 'Disability System | Sistema de Gestión de Incapacidades',
     },
 }
 
