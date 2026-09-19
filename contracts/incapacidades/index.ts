@@ -64,6 +64,7 @@ export const IncapacidadListResponseSchema = z.object({
 export type IncapacidadListResponse = z.infer<typeof IncapacidadListResponseSchema>;
 
 export const CreateIncapacidadRequestSchema = z.object({
+  id_usuario: z.number().optional(),
   id_tipo: z.number(),
   id_entidad: z.number(),
   titulo: z.string(),

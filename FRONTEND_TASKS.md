@@ -35,12 +35,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 2.1.6 Crear acciones rápidas (ver, editar, cambiar estado)
 
 #### 2.2 Crear Incapacidad
-- [ ] 2.2.1 Crear página /incapacidades/crear
-- [ ] 2.2.2 Formulario con Formik + validación Yup
-- [ ] 2.2.3 Integrar POST /incapacidades
-- [ ] 2.2.4 Selects para tipo, entidad, origen, canal (cargar desde catálogos)
-- [ ] 2.2.5 Date pickers para fechas inicio/fin
-- [ ] 2.2.6 Validación de días y fechas
+- [x] 2.2.1 Crear página /incapacidades/crear
+- [x] 2.2.2 Formulario con Formik + validación Yup
+- [x] 2.2.3 Integrar POST /incapacidades
+- [x] 2.2.4 Selects para tipo, entidad, origen, canal (cargar desde catálogos)
+- [x] 2.2.5 Date pickers para fechas inicio/fin
+- [x] 2.2.6 Validación de días y fechas
 
 #### 2.3 Detalle de Incapacidad
 - [ ] 2.3.1 Crear página /incapacidades/[id]
