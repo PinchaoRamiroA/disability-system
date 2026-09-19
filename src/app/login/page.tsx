@@ -58,6 +58,16 @@ function AuthForm() {
         direccion: '',
     })
 
+    const redirectParam = searchParams.get('redirect') || '/dashboard'
+
+    // Pre-warm backend on mount to mitigate Render.com free tier cold starts
+    useEffect(() => {
+        const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL ||
+            'https://disability-system-backend.onrender.com/api/v1'
+        fetch(apiUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {})
+    }, [])
+
     // If already authenticated, allow quick navigation to dashboard
     useEffect(() => {
         if (isAuthenticated && !successMessage) {
@@ -93,7 +103,7 @@ function AuthForm() {
             await login(validation.data)
             setSuccessMessage('¡Bienvenido! Sesión iniciada correctamente.')
             setTimeout(() => {
-                router.push('/')
+                router.push(redirectParam)
             }, 1000)
         } catch {
             // Error is handled in Redux auth slice and exposed via useAuth

@@ -25,8 +25,20 @@ export const loginThunk = createAsyncThunk(
         try {
             return await authService.login(credentials)
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response?.data?.message) {
-                return rejectWithValue(error.response.data.message as string)
+            if (axios.isAxiosError(error)) {
+                if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+                    return rejectWithValue(
+                        'El servidor tardó demasiado en responder (arranque en frío). Por favor, intenta de nuevo en unos segundos.'
+                    )
+                }
+                if (!error.response) {
+                    return rejectWithValue(
+                        'No se pudo conectar con el servidor backend. Verifica tu conexión o el estado de la API.'
+                    )
+                }
+                if (error.response.data?.message) {
+                    return rejectWithValue(error.response.data.message as string)
+                }
             }
             if (error instanceof Error) {
                 return rejectWithValue(error.message)
@@ -42,8 +54,20 @@ export const registerThunk = createAsyncThunk(
         try {
             return await authService.register(data)
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response?.data?.message) {
-                return rejectWithValue(error.response.data.message as string)
+            if (axios.isAxiosError(error)) {
+                if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+                    return rejectWithValue(
+                        'El servidor tardó demasiado en responder. Por favor, intenta de nuevo.'
+                    )
+                }
+                if (!error.response) {
+                    return rejectWithValue(
+                        'No se pudo conectar con el servidor backend. Verifica tu conexión.'
+                    )
+                }
+                if (error.response.data?.message) {
+                    return rejectWithValue(error.response.data.message as string)
+                }
             }
             if (error instanceof Error) {
                 return rejectWithValue(error.message)
@@ -59,8 +83,10 @@ export const refreshTokenThunk = createAsyncThunk(
         try {
             return await authService.refreshToken(token)
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response?.data?.message) {
-                return rejectWithValue(error.response.data.message as string)
+            if (axios.isAxiosError(error)) {
+                if (error.response?.data?.message) {
+                    return rejectWithValue(error.response.data.message as string)
+                }
             }
             if (error instanceof Error) {
                 return rejectWithValue(error.message)
