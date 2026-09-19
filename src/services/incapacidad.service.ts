@@ -7,7 +7,11 @@ import type {
     Estado,
     TipoIncapacidad,
     Entidad,
+    PlazosInfo,
+    HistorialEvento,
+    IncapacidadDocumento,
 } from '@/contracts/incapacidades'
+import type { Pago, Seguimiento } from '@/contracts/cobros'
 
 export interface IncapacidadQueryParams {
     page?: number
@@ -148,6 +152,112 @@ export async function getDocumentosRequeridos(tipoId: number | string): Promise<
     }
 }
 
+/**
+ * Obtiene la información de plazos legales, transcripción y alertas de una incapacidad
+ */
+export async function getIncapacidadPlazos(
+    id: number | string
+): Promise<PlazosInfo | null> {
+    try {
+        const response = await apiClient.get<{
+            success: boolean
+            data: PlazosInfo
+        }>(`/incapacidades/${id}/plazos`)
+        return response.data?.data || null
+    } catch {
+        return null
+    }
+}
+
+/**
+ * Obtiene la lista de documentos asociados a una incapacidad
+ */
+export async function getIncapacidadDocumentos(
+    id: number | string
+): Promise<IncapacidadDocumento[]> {
+    try {
+        const response = await apiClient.get<{
+            success: boolean
+            data: IncapacidadDocumento[]
+        }>(`/incapacidades/${id}/documentos`)
+        return Array.isArray(response.data?.data) ? response.data.data : []
+    } catch {
+        return []
+    }
+}
+
+/**
+ * Obtiene el historial cronológico de cambios de una incapacidad
+ */
+export async function getIncapacidadHistorial(
+    id: number | string
+): Promise<HistorialEvento[]> {
+    try {
+        const response = await apiClient.get<{
+            success: boolean
+            data: { items?: HistorialEvento[] } | HistorialEvento[]
+        }>(`/incapacidades/${id}/historial`)
+
+        if (Array.isArray(response.data?.data)) {
+            return response.data.data
+        }
+        if (response.data?.data && Array.isArray(response.data.data.items)) {
+            return response.data.data.items
+        }
+        return []
+    } catch {
+        return []
+    }
+}
+
+/**
+ * Obtiene los pagos registrados asociados a una incapacidad
+ */
+export async function getIncapacidadPagos(
+    id: number | string
+): Promise<Pago[]> {
+    try {
+        const response = await apiClient.get<{
+            success: boolean
+            data: { items?: Pago[] } | Pago[]
+        }>(`/cobros/pagos`, { params: { id_incapacidad: id } })
+
+        if (Array.isArray(response.data?.data)) {
+            return response.data.data
+        }
+        if (response.data?.data && Array.isArray(response.data.data.items)) {
+            return response.data.data.items
+        }
+        return []
+    } catch {
+        return []
+    }
+}
+
+/**
+ * Obtiene los seguimientos de cobro asociados a una incapacidad
+ */
+export async function getIncapacidadSeguimientos(
+    id: number | string
+): Promise<Seguimiento[]> {
+    try {
+        const response = await apiClient.get<{
+            success: boolean
+            data: { items?: Seguimiento[] } | Seguimiento[]
+        }>(`/cobros/seguimientos`, { params: { id_incapacidad: id } })
+
+        if (Array.isArray(response.data?.data)) {
+            return response.data.data
+        }
+        if (response.data?.data && Array.isArray(response.data.data.items)) {
+            return response.data.data.items
+        }
+        return []
+    } catch {
+        return []
+    }
+}
+
 export const incapacidadService = {
     getIncapacidades,
     getIncapacidadById,
@@ -157,6 +267,11 @@ export const incapacidadService = {
     cambiarEstado,
     crearIncapacidad,
     getDocumentosRequeridos,
+    getIncapacidadPlazos,
+    getIncapacidadDocumentos,
+    getIncapacidadHistorial,
+    getIncapacidadPagos,
+    getIncapacidadSeguimientos,
 }
 
 export default incapacidadService

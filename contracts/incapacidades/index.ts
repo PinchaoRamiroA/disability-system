@@ -140,3 +140,47 @@ export const PlazoSchema = z.object({
 });
 
 export type Plazo = z.infer<typeof PlazoSchema>;
+
+export const PlazosInfoSchema = z.object({
+  id_incapacidad: z.number(),
+  tipo_incapacidad: z.string().optional(),
+  documentos_requeridos: z.array(z.any()).optional(),
+  plazo_entrega_dias: z.number().optional(),
+  fecha_limite_entrega: z.string().optional(),
+  plazo_transcripcion_dias: z.number().optional(),
+  fecha_limite_transcripcion: z.string().optional(),
+  tiempo_maximo_pago_dias: z.number().optional(),
+  fecha_limite_pago: z.string().optional(),
+  dias_transcurridos: z.number().optional(),
+  alertas_vencimiento: z.array(z.string()).optional(),
+});
+
+export type PlazosInfo = z.infer<typeof PlazosInfoSchema>;
+
+export const HistorialEventoSchema = z.object({
+  id_historial: z.number(),
+  id_incapacidad: z.number(),
+  id_tipo_historial: z.number().optional(),
+  descripcion: z.string(),
+  fecha: z.string(),
+  gestor_id: z.number().nullable().optional(),
+});
+
+export type HistorialEvento = z.infer<typeof HistorialEventoSchema>;
+
+export const IncapacidadDocumentoSchema = z.object({
+  id_documento: z.number(),
+  id_incapacidad: z.number(),
+  nombre: z.string(),
+  tipo: z.string(),
+  url: z.string(),
+  formato: z.string().optional(),
+  estado: z.string().optional(),
+  comentario: z.string().nullable().optional(),
+  validado_por: z.number().nullable().optional(),
+  fecha_carga: z.string().optional(),
+  fecha_validacion: z.string().nullable().optional(),
+  created_at: z.string().optional(),
+});
+
+export type IncapacidadDocumento = z.infer<typeof IncapacidadDocumentoSchema>;

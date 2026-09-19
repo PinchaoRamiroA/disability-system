@@ -43,12 +43,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 2.2.6 Validación de días y fechas
 
 #### 2.3 Detalle de Incapacidad
-- [ ] 2.3.1 Crear página /incapacidades/[id]
-- [ ] 2.3.2 Tabs para información general, documentos, historial, seguimientos, pagos
-- [ ] 2.3.3 Header con semáforo de estado y días transcurridos
-- [ ] 2.3.4 Integrar GET /incapacidades/{id}
-- [ ] 2.3.5 Mostrar entidad, tipo, fechas, observaciones
-- [ ] 2.3.6 Timeline stepper para estados (ver los estados en la docs)
+- [x] 2.3.1 Crear página /incapacidades/[id]
+- [x] 2.3.2 Tabs para información general, documentos, historial, seguimientos, pagos
+- [x] 2.3.3 Header con semáforo de estado y días transcurridos
+- [x] 2.3.4 Integrar GET /incapacidades/{id}
+- [x] 2.3.5 Mostrar entidad, tipo, fechas, observaciones
+- [x] 2.3.6 Timeline stepper para estados (ver los estados en la docs)
 
 #### 2.4 Cambiar Estado
 - [ ] 2.4.1 Integrar PATCH /incapacidades/{id}/estado
