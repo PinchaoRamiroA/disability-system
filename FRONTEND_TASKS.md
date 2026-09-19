@@ -27,12 +27,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 ### 🟠 PRIORIDAD 2 - CORE INCAPACIDADES (Semana 2)
 
 #### 2.1 Listado de Incapacidades
-- [ ] 2.1.1 Crear página /incapacidades
-- [ ] 2.1.2 Reutilizar componente Table con server pagination
-- [ ] 2.1.3 Crear filtros (estado, tipo, entidad, fecha, origen, canal)
-- [ ] 2.1.4 Integrar GET /incapacidades con query params
-- [ ] 2.1.5 Implementar búsqueda por colaborador/documento
-- [ ] 2.1.6 Crear acciones rápidas (ver, editar, cambiar estado)
+- [x] 2.1.1 Crear página /incapacidades
+- [x] 2.1.2 Crear y usar un componente Table con server pagination
+- [x] 2.1.3 Crear filtros (estado, tipo, entidad, fecha, origen, canal)
+- [x] 2.1.4 Integrar GET /incapacidades con query params
+- [x] 2.1.5 Implementar búsqueda por colaborador/documento
+- [x] 2.1.6 Crear acciones rápidas (ver, editar, cambiar estado)
 
 #### 2.2 Crear Incapacidad
 - [ ] 2.2.1 Crear página /incapacidades/crear
@@ -193,7 +193,7 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 #### 10.1 Gestión de Usuarios
 - [ ] 10.1.1 Crear página /usuarios
 - [ ] 10.1.2 Tabla: nombre, rol, estado, último acceso
-- [ ] 10.1.3 Crear/editar usuario
+- [ ] 10.1.3 Crear/editar usuario y registro en login
 - [ ] 10.1.4 Bloquear/reset contraseña
 
 #### 10.2 Roles y Permisos
@@ -259,9 +259,8 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 
 1. **Tipos TypeScript:** Crear interfaces para cada entidad según AGENTS.md response
 2. **Servicios API:** Crear carpeta `/services/api/incapacidades`, `/cobros`, etc.
-3. **Testing:** Mantener estructura cypress existente
-4. **Responsive:** Asegurar funcionamiento en desktop (prioridad) y tablet
-5. **Performance:** Implementar virtualización para tablas grandes
+3. **Responsive:** Asegurar funcionamiento en desktop (prioridad) y tablet
+4. **Performance:** Implementar virtualización para tablas grandes
 
 ---
 
