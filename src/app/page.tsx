@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   Activity,
   ArrowUpRight,
@@ -16,9 +17,13 @@ import {
   Users,
   ChevronRight,
   FolderOpen,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function HomePage() {
+  const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('todos');
 
@@ -254,11 +259,38 @@ export default function HomePage() {
               <span className="text-[10px] text-[#94a3b8] hidden md:inline">disability-system-backend</span>
             </div>
 
-            {/* User Badge */}
+            {/* User Session or Login Button */}
             <div className="flex items-center gap-3 pl-2 border-l border-[#334155]/60">
-              <div className="h-9 w-9 rounded-lg bg-[#1e293b] border border-[#334155] flex items-center justify-center text-sm font-semibold text-blue-400">
-                DR
-              </div>
+              {isAuthenticated && user ? (
+                <div className="flex items-center gap-3">
+                  <div className="text-right hidden sm:block">
+                    <div className="text-xs font-semibold text-white leading-none">
+                      {user.nombre}
+                    </div>
+                    <span className="text-[10px] text-blue-400 font-medium">
+                      {user.rol?.nombre || 'Operador'}
+                    </span>
+                  </div>
+                  <div className="h-9 w-9 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-xs font-bold text-blue-400">
+                    {user.nombre.substring(0, 2).toUpperCase()}
+                  </div>
+                  <button
+                    onClick={() => logout()}
+                    title="Cerrar Sesión"
+                    className="p-2 rounded-lg bg-[#1e293b] hover:bg-red-500/20 hover:text-red-400 border border-[#334155] text-[#94a3b8] transition"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition shadow-sm active:scale-95"
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  <span>Iniciar Sesión</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>
