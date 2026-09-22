@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { AlertCircle, CheckCircle2, Clock, ShieldAlert, Sparkles, Building, Landmark } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Clock, ShieldAlert, Building, Landmark } from 'lucide-react'
 
 interface SemaphoreProps {
     statusName: string

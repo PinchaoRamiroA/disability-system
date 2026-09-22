@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use, useEffect, useState, useMemo } from 'react'
+import React, { use, useEffect, useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import {
     AlertCircle,
@@ -11,22 +11,18 @@ import {
     Clock,
     CreditCard,
     Download,
-    ExternalLink,
     FileCheck2,
     FileText,
     History,
     Info,
-    Landmark,
-    MessageSquare,
     PhoneCall,
     Receipt,
-    Shield,
-    ShieldAlert,
-    User,
-    Users,
+    RefreshCw,
+    X,
 } from 'lucide-react'
 import type {
     Incapacidad,
+    Estado,
     PlazosInfo,
     HistorialEvento,
     IncapacidadDocumento,
@@ -39,10 +35,13 @@ import {
     getIncapacidadHistorial,
     getIncapacidadPagos,
     getIncapacidadSeguimientos,
+    getEstados,
 } from '@/services/incapacidad.service'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { IncapacidadTimelineStepper } from '@/components/incapacidades/IncapacidadTimelineStepper'
 import { IncapacidadStatusSemaphore } from '@/components/incapacidades/IncapacidadStatusSemaphore'
+import { ModalCambiarEstado } from '@/components/incapacidades/ModalCambiarEstado'
+import { useAuth } from '@/hooks/useAuth'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -52,8 +51,10 @@ type TabKey = 'general' | 'documentos' | 'historial' | 'seguimientos' | 'pagos'
 
 export default function IncapacidadDetailPage({ params }: PageProps) {
     const { id } = use(params)
+    const { user, isAdmin, hasPermission } = useAuth()
 
     const [incapacidad, setIncapacidad] = useState<Incapacidad | null>(null)
+    const [estados, setEstados] = useState<Estado[]>([])
     const [plazos, setPlazos] = useState<PlazosInfo | null>(null)
     const [documentos, setDocumentos] = useState<IncapacidadDocumento[]>([])
     const [historial, setHistorial] = useState<HistorialEvento[]>([])
@@ -63,6 +64,16 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
     const [activeTab, setActiveTab] = useState<TabKey>('general')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    const [isChangeModalOpen, setIsChangeModalOpen] = useState(false)
+    const [successBanner, setSuccessBanner] = useState<string | null>(null)
+
+    // Cargar catálogo de estados
+    useEffect(() => {
+        getEstados()
+            .then(setEstados)
+            .catch(() => {})
+    }, [])
 
     useEffect(() => {
         let isMounted = true
@@ -112,6 +123,45 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
         }
     }, [id])
 
+    // Permission check for changing state
+    const canChangeEstado = useMemo(() => {
+        if (isAdmin) return true
+        const roleName = user?.rol?.nombre?.toLowerCase() || ''
+        if (
+            roleName.includes('gestión humana') ||
+            roleName.includes('gestion humana') ||
+            roleName.includes('sg-sst') ||
+            roleName.includes('administrador')
+        ) {
+            return true
+        }
+        return hasPermission('editar_incapacidad') || hasPermission('archivar_incapacidad')
+    }, [user, isAdmin, hasPermission])
+
+    // Refetch data reactively after status change (Task 2.4.4)
+    const refetchData = useCallback(async () => {
+        try {
+            const [newData, plazosData, histData] = await Promise.all([
+                getIncapacidadById(id),
+                getIncapacidadPlazos(id),
+                getIncapacidadHistorial(id),
+            ])
+            setIncapacidad(newData)
+            setPlazos(plazosData)
+            setHistorial(histData)
+        } catch (err) {
+            console.error('Error al actualizar datos tras cambio de estado:', err)
+        }
+    }, [id])
+
+    const handleEstadoChanged = useCallback(
+        async (nuevoEstadoNombre: string) => {
+            setSuccessBanner(`Estado de incapacidad actualizado a "${nuevoEstadoNombre}" exitosamente.`)
+            await refetchData()
+        },
+        [refetchData]
+    )
+
     // Calculate total calendar days
     const totalDays = useMemo(() => {
         if (!incapacidad?.fecha_inicio || !incapacidad?.fecha_fin) return 0
@@ -120,7 +170,7 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
         if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0
         const diff = end.getTime() - start.getTime()
         return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1
-    }, [incapacidad?.fecha_inicio, incapacidad?.fecha_fin])
+    }, [incapacidad])
 
     // Total amount calculated from payments
     const totalPagado = useMemo(() => {
@@ -162,15 +212,42 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
+                    {canChangeEstado && incapacidad && (
+                        <button
+                            type="button"
+                            onClick={() => setIsChangeModalOpen(true)}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition cursor-pointer"
+                        >
+                            <RefreshCw className="h-3.5 w-3.5" />
+                            <span>Cambiar Estado</span>
+                        </button>
+                    )}
                     <Link
                         href="/incapacidades/crear"
-                        className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow transition"
+                        className="px-3.5 py-2 rounded-xl bg-[#1e293b] hover:bg-[#334155] border border-[#334155] text-white text-xs font-semibold shadow transition"
                     >
                         Nueva Incapacidad
                     </Link>
                 </div>
             </div>
+
+            {/* Success Banner */}
+            {successBanner && (
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center justify-between animate-in fade-in duration-200">
+                    <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                        <span className="font-semibold">{successBanner}</span>
+                    </div>
+                    <button
+                        onClick={() => setSuccessBanner(null)}
+                        className="text-emerald-400/70 hover:text-emerald-300 p-1 cursor-pointer"
+                        title="Cerrar notificación"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+            )}
 
             {/* Error State */}
             {error && (
@@ -733,6 +810,15 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                     )}
                 </>
             )}
+
+            {/* Modal de Cambio de Estado (Task 2.4) */}
+            <ModalCambiarEstado
+                isOpen={isChangeModalOpen}
+                onClose={() => setIsChangeModalOpen(false)}
+                incapacidad={incapacidad}
+                estados={estados}
+                onSuccess={handleEstadoChanged}
+            />
         </div>
     )
 }

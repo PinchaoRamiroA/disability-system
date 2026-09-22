@@ -51,10 +51,10 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 2.3.6 Timeline stepper para estados (ver los estados en la docs)
 
 #### 2.4 Cambiar Estado
-- [ ] 2.4.1 Integrar PATCH /incapacidades/{id}/estado
-- [ ] 2.4.2 Mostrar modal de confirmación
-- [ ] 2.4.3 Registrar observaciones del cambio
-- [ ] 2.4.4 Actualizar UI después del cambio
+- [x] 2.4.1 Integrar PATCH /incapacidades/{id}/estado
+- [x] 2.4.2 Mostrar modal de confirmación
+- [x] 2.4.3 Registrar observaciones del cambio
+- [x] 2.4.4 Actualizar UI después del cambio
 
 ---
 

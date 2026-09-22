@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CheckCircle2, Clock, AlertTriangle, XCircle, ShieldCheck, FileCheck2, ArrowRight } from 'lucide-react'
+import { CheckCircle2, Clock, AlertTriangle, XCircle, ShieldCheck } from 'lucide-react'
 
 interface TimelineStepperProps {
     currentStatus: string
@@ -106,7 +106,6 @@ export function IncapacidadTimelineStepper({ currentStatus }: TimelineStepperPro
                 {STEPS.map((step, index) => {
                     const isCompleted = index < activeStepIndex && !isRechazada
                     const isCurrent = index === activeStepIndex
-                    const isPending = index > activeStepIndex
 
                     return (
                         <div
