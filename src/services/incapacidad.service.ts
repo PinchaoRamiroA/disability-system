@@ -170,6 +170,31 @@ export async function getIncapacidadPlazos(
 }
 
 /**
+ * Carga un documento adjunto a una incapacidad (PDF, JPG, PNG hasta 10MB)
+ */
+export async function uploadDocumento(
+    incapacidadId: number | string,
+    file: File,
+    tipo: string
+): Promise<IncapacidadDocumento> {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('tipo', tipo)
+
+    const response = await apiClient.post<{
+        success: boolean
+        message?: string
+        data: IncapacidadDocumento
+    }>(`/incapacidades/${incapacidadId}/documentos`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    })
+
+    return response.data.data
+}
+
+/**
  * Obtiene la lista de documentos asociados a una incapacidad
  */
 export async function getIncapacidadDocumentos(
@@ -178,9 +203,15 @@ export async function getIncapacidadDocumentos(
     try {
         const response = await apiClient.get<{
             success: boolean
-            data: IncapacidadDocumento[]
+            data: { items?: IncapacidadDocumento[] } | IncapacidadDocumento[]
         }>(`/incapacidades/${id}/documentos`)
-        return Array.isArray(response.data?.data) ? response.data.data : []
+        if (Array.isArray(response.data?.data)) {
+            return response.data.data
+        }
+        if (response.data?.data && Array.isArray(response.data.data.items)) {
+            return response.data.data.items
+        }
+        return []
     } catch {
         return []
     }
@@ -267,6 +298,7 @@ export const incapacidadService = {
     cambiarEstado,
     crearIncapacidad,
     getDocumentosRequeridos,
+    uploadDocumento,
     getIncapacidadPlazos,
     getIncapacidadDocumentos,
     getIncapacidadHistorial,

@@ -11,6 +11,7 @@ import {
     Clock,
     CreditCard,
     Download,
+    Eye,
     FileCheck2,
     FileText,
     History,
@@ -18,6 +19,7 @@ import {
     PhoneCall,
     Receipt,
     RefreshCw,
+    Upload,
     X,
 } from 'lucide-react'
 import type {
@@ -41,6 +43,9 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { IncapacidadTimelineStepper } from '@/components/incapacidades/IncapacidadTimelineStepper'
 import { IncapacidadStatusSemaphore } from '@/components/incapacidades/IncapacidadStatusSemaphore'
 import { ModalCambiarEstado } from '@/components/incapacidades/ModalCambiarEstado'
+import { FileUploader } from '@/components/documentos/FileUploader'
+import { DocumentChecklist } from '@/components/documentos/DocumentChecklist'
+import { DocumentPreviewModal } from '@/components/documentos/DocumentPreviewModal'
 import { useAuth } from '@/hooks/useAuth'
 
 interface PageProps {
@@ -66,6 +71,9 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
     const [error, setError] = useState<string | null>(null)
 
     const [isChangeModalOpen, setIsChangeModalOpen] = useState(false)
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+    const [uploadTipoModal, setUploadTipoModal] = useState<string | null>(null)
+    const [previewDoc, setPreviewDoc] = useState<IncapacidadDocumento | null>(null)
     const [successBanner, setSuccessBanner] = useState<string | null>(null)
 
     // Cargar catálogo de estados
@@ -161,6 +169,24 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
         },
         [refetchData]
     )
+
+    // Documentos requeridos según tipo de incapacidad (Task 3.1.6)
+    const requiredTipos = useMemo(() => {
+        if (!incapacidad?.tipo?.documentos_requeridos) return []
+        return incapacidad.tipo.documentos_requeridos
+    }, [incapacidad])
+
+    const handleQuickUpload = (tipo: string) => {
+        setUploadTipoModal(tipo)
+        setIsUploadModalOpen(true)
+    }
+
+    const handleUploadSuccess = async () => {
+        setIsUploadModalOpen(false)
+        setSuccessBanner('Soporte documental cargado exitosamente.')
+        const updatedDocs = await getIncapacidadDocumentos(id)
+        setDocumentos(updatedDocs)
+    }
 
     // Calculate total calendar days
     const totalDays = useMemo(() => {
@@ -536,95 +562,142 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
 
                     {/* Tab 2: Documentos */}
                     {activeTab === 'documentos' && (
-                        <div className="rounded-2xl bg-[#111827] border border-[#334155] p-6 space-y-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#334155]/60">
-                                <div>
-                                    <h2 className="text-sm font-semibold text-white">
-                                        Expediente Documental Adjunto
-                                    </h2>
-                                    <p className="text-xs text-[#94a3b8]">
-                                        Documentos y soportes requeridos para el reconocimiento y transcripción
-                                    </p>
-                                </div>
-                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
-                                    {documentos.length} documento{documentos.length !== 1 ? 's' : ''} registrado{documentos.length !== 1 ? 's' : ''}
-                                </span>
-                            </div>
-
-                            {documentos.length === 0 ? (
-                                <div className="p-12 text-center rounded-xl bg-[#0f172a] border border-[#334155] space-y-3">
-                                    <FileText className="h-10 w-10 text-[#64748b] mx-auto" />
-                                    <p className="text-sm text-white font-medium">
-                                        No hay documentos cargados en esta incapacidad.
-                                    </p>
-                                    <p className="text-xs text-[#94a3b8] max-w-md mx-auto">
-                                        Los documentos requeridos incluyen el certificado médico original, historia clínica o epicrisis según el origen de la contingencia.
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left text-xs">
-                                        <thead className="bg-[#0f172a] text-[#94a3b8] uppercase font-semibold text-[11px] border-b border-[#334155]">
-                                            <tr>
-                                                <th className="py-3 px-4">Documento / Archivo</th>
-                                                <th className="py-3 px-4">Tipo de Soporte</th>
-                                                <th className="py-3 px-4">Estado</th>
-                                                <th className="py-3 px-4">Fecha de Carga</th>
-                                                <th className="py-3 px-4 text-right">Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-[#334155]/50">
-                                            {documentos.map((doc) => (
-                                                <tr key={doc.id_documento} className="hover:bg-[#1e293b]/40 transition">
-                                                    <td className="py-3.5 px-4">
-                                                        <div className="flex items-center gap-2.5">
-                                                            <FileText className="h-4 w-4 text-cyan-400 shrink-0" />
-                                                            <div>
-                                                                <span className="font-semibold text-white block">
-                                                                    {doc.nombre}
-                                                                </span>
-                                                                <span className="text-[10px] text-[#94a3b8] uppercase">
-                                                                    Formato: {doc.formato || 'PDF'}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-3.5 px-4 text-[#cbd5e1] font-medium capitalize">
-                                                        {doc.tipo?.replace(/_/g, ' ')}
-                                                    </td>
-                                                    <td className="py-3.5 px-4">
-                                                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
-                                                            doc.estado === 'Validado'
-                                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                                                : doc.estado === 'Rechazado'
-                                                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                                                                : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                                        }`}>
-                                                            {doc.estado || 'Pendiente'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="py-3.5 px-4 text-[#94a3b8]">
-                                                        {doc.fecha_carga || doc.created_at || 'Reciente'}
-                                                    </td>
-                                                    <td className="py-3.5 px-4 text-right">
-                                                        {doc.url && (
-                                                            <a
-                                                                href={doc.url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1e293b] hover:bg-blue-600 text-[#cbd5e1] hover:text-white border border-[#334155] transition text-xs font-medium"
-                                                            >
-                                                                <Download className="h-3 w-3" />
-                                                                <span>Descargar</span>
-                                                            </a>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <div className="space-y-6">
+                            {/* Checklist de Requerimientos Obligatorios (Task 3.1.6) */}
+                            {requiredTipos.length > 0 && (
+                                <DocumentChecklist
+                                    requiredTipos={requiredTipos}
+                                    uploadedDocs={documentos}
+                                    onQuickUpload={handleQuickUpload}
+                                />
                             )}
+
+                            {/* Expediente y Tabla de Soportes */}
+                            <div className="rounded-2xl bg-[#111827] border border-[#334155] p-6 space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#334155]/60">
+                                    <div>
+                                        <h2 className="text-sm font-semibold text-white">
+                                            Expediente Documental Adjunto
+                                        </h2>
+                                        <p className="text-xs text-[#94a3b8]">
+                                            Documentos y soportes requeridos para el reconocimiento y transcripción
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2.5">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setUploadTipoModal(null)
+                                                setIsUploadModalOpen(true)
+                                            }}
+                                            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow transition cursor-pointer"
+                                        >
+                                            <Upload className="h-3.5 w-3.5" />
+                                            <span>Adjuntar Soporte</span>
+                                        </button>
+                                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
+                                            {documentos.length} documento{documentos.length !== 1 ? 's' : ''} registrado{documentos.length !== 1 ? 's' : ''}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {documentos.length === 0 ? (
+                                    <div className="p-12 text-center rounded-xl bg-[#0f172a] border border-[#334155] space-y-3">
+                                        <FileText className="h-10 w-10 text-[#64748b] mx-auto" />
+                                        <p className="text-sm text-white font-medium">
+                                            No hay documentos cargados en esta incapacidad.
+                                        </p>
+                                        <p className="text-xs text-[#94a3b8] max-w-md mx-auto">
+                                            Los documentos requeridos incluyen el certificado médico original, historia clínica o epicrisis según el origen de la contingencia.
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setUploadTipoModal(null)
+                                                setIsUploadModalOpen(true)
+                                            }}
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow transition cursor-pointer"
+                                        >
+                                            <Upload className="h-3.5 w-3.5" />
+                                            <span>Cargar Primer Soporte</span>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-xs">
+                                            <thead className="bg-[#0f172a] text-[#94a3b8] uppercase font-semibold text-[11px] border-b border-[#334155]">
+                                                <tr>
+                                                    <th className="py-3 px-4">Documento / Archivo</th>
+                                                    <th className="py-3 px-4">Tipo de Soporte</th>
+                                                    <th className="py-3 px-4">Estado</th>
+                                                    <th className="py-3 px-4">Fecha de Carga</th>
+                                                    <th className="py-3 px-4 text-right">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-[#334155]/50">
+                                                {documentos.map((doc) => (
+                                                    <tr key={doc.id_documento} className="hover:bg-[#1e293b]/40 transition">
+                                                        <td className="py-3.5 px-4">
+                                                            <div className="flex items-center gap-2.5">
+                                                                <FileText className="h-4 w-4 text-cyan-400 shrink-0" />
+                                                                <div>
+                                                                    <span className="font-semibold text-white block">
+                                                                        {doc.nombre}
+                                                                    </span>
+                                                                    <span className="text-[10px] text-[#94a3b8] uppercase">
+                                                                        Formato: {doc.formato || 'PDF'}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-3.5 px-4 text-[#cbd5e1] font-medium capitalize">
+                                                            {doc.tipo?.replace(/_/g, ' ')}
+                                                        </td>
+                                                        <td className="py-3.5 px-4">
+                                                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                                                                doc.estado === 'Validado'
+                                                                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                                    : doc.estado === 'Rechazado'
+                                                                    ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                                                    : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                                            }`}>
+                                                                {doc.estado || 'Pendiente'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3.5 px-4 text-[#94a3b8]">
+                                                            {doc.fecha_carga || doc.created_at || 'Reciente'}
+                                                        </td>
+                                                        <td className="py-3.5 px-4 text-right">
+                                                            <div className="flex items-center justify-end gap-2">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setPreviewDoc(doc)}
+                                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#1e293b] hover:bg-[#334155] text-white border border-[#334155] transition text-xs font-medium cursor-pointer"
+                                                                    title="Visualizar documento"
+                                                                >
+                                                                    <Eye className="h-3 w-3 text-cyan-400" />
+                                                                    <span>Ver</span>
+                                                                </button>
+                                                                {doc.url && (
+                                                                    <a
+                                                                        href={doc.url}
+                                                                        download={doc.nombre}
+                                                                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#1e293b] hover:bg-blue-600 text-[#cbd5e1] hover:text-white border border-[#334155] transition text-xs font-medium"
+                                                                        title="Descargar archivo"
+                                                                    >
+                                                                        <Download className="h-3 w-3" />
+                                                                        <span>Descargar</span>
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 
@@ -818,6 +891,45 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                 incapacidad={incapacidad}
                 estados={estados}
                 onSuccess={handleEstadoChanged}
+            />
+
+            {/* Modal de Carga Documental (Task 3.1) */}
+            {isUploadModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-150">
+                    <div className="w-full max-w-lg bg-[#111827] border border-[#334155] rounded-2xl shadow-2xl overflow-hidden p-6 space-y-4">
+                        <div className="flex items-center justify-between pb-3 border-b border-[#334155]">
+                            <div>
+                                <h2 className="text-sm font-semibold text-white">
+                                    Adjuntar Soporte Documental
+                                </h2>
+                                <p className="text-xs text-[#94a3b8]">
+                                    Incapacidad #{id} • PDF, JPG, PNG hasta 10 MB
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setIsUploadModalOpen(false)}
+                                className="p-1.5 rounded-lg text-[#94a3b8] hover:text-white hover:bg-[#1e293b] transition cursor-pointer"
+                                title="Cerrar modal"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                        <FileUploader
+                            incapacidadId={id}
+                            availableTipos={requiredTipos.length > 0 ? requiredTipos : undefined}
+                            defaultTipo={uploadTipoModal || undefined}
+                            onSuccess={handleUploadSuccess}
+                            onCancel={() => setIsUploadModalOpen(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Visor de Documento (Task 3.1.4) */}
+            <DocumentPreviewModal
+                isOpen={!!previewDoc}
+                onClose={() => setPreviewDoc(null)}
+                documento={previewDoc}
             />
         </div>
     )

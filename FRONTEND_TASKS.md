@@ -61,12 +61,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 ### 🟡 PRIORIDAD 3 - DOCUMENTOS (Semana 2-3)
 
 #### 3.1 Gestión Documental
-- [ ] 3.1.1 Crear componente FileUploader (drag & drop)
-- [ ] 3.1.2 Integrar POST /incapacidades/{id}/documentos/upload
-- [ ] 3.1.3 Validar tipo de archivo (PDF, JPG, PNG) y tamaño (10MB)
-- [ ] 3.1.4 Mostrar preview de documentos
-- [ ] 3.1.5 Integrar GET /incapacidades/{id}/documentos
-- [ ] 3.1.6 Componente checklist visual (✅ completo, ⚠️ faltante, ❌ inválido)
+- [x] 3.1.1 Crear componente FileUploader (drag & drop)
+- [x] 3.1.2 Integrar POST /incapacidades/{id}/documentos/upload
+- [x] 3.1.3 Validar tipo de archivo (PDF, JPG, PNG) y tamaño (10MB)
+- [x] 3.1.4 Mostrar preview de documentos
+- [x] 3.1.5 Integrar GET /incapacidades/{id}/documentos
+- [x] 3.1.6 Componente checklist visual (✅ completo, ⚠️ faltante, ❌ inválido)
 
 #### 3.2 Validación de Documentos
 - [ ] 3.2.1 Crear página validación documental
