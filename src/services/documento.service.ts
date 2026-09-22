@@ -187,10 +187,28 @@ export async function validarDocumento(
 }
 
 /**
- * Elimina un documento
+ * Elimina o archiva un documento
  */
 export async function deleteDocumento(documentoId: number | string): Promise<void> {
     await apiClient.delete(`/documentos/${documentoId}`)
+}
+
+/**
+ * Reemplaza un documento existente por un nuevo archivo (sube nueva versión y archiva el anterior)
+ */
+export async function reemplazarDocumento(
+    incapacidadId: number | string,
+    oldDocumentoId: number | string,
+    newFile: File,
+    tipo: string
+): Promise<IncapacidadDocumento> {
+    const nuevo = await uploadDocumento(incapacidadId, newFile, tipo)
+    try {
+        await deleteDocumento(oldDocumentoId)
+    } catch (e) {
+        console.warn('No se pudo archivar el soporte anterior al reemplazar:', e)
+    }
+    return nuevo
 }
 
 export const documentoService = {
@@ -202,6 +220,7 @@ export const documentoService = {
     getEstadosDocumento,
     validarDocumento,
     deleteDocumento,
+    reemplazarDocumento,
 }
 
 export default documentoService

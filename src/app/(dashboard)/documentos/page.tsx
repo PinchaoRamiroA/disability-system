@@ -250,7 +250,23 @@ function DocumentosContent() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Switcher de Vistas Principales */}
+                    <div className="flex items-center p-1 rounded-xl bg-[#111827] border border-[#334155]">
+                        <Link
+                            href="/documentos"
+                            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white shadow"
+                        >
+                            Validación Documental
+                        </Link>
+                        <Link
+                            href="/documentos/archivo"
+                            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#94a3b8] hover:text-white transition"
+                        >
+                            Archivo Digital (Drive)
+                        </Link>
+                    </div>
+
                     {selectedId && (
                         <button
                             type="button"

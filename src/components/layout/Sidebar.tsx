@@ -49,6 +49,7 @@ export function Sidebar({ isOpenMobile, onCloseMobile }: SidebarProps) {
     const { user, logout } = useAuth()
     const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
         Incapacidades: true,
+        'Expediente Documental': true,
         Cobros: false,
     })
 
@@ -81,6 +82,10 @@ export function Sidebar({ isOpenMobile, onCloseMobile }: SidebarProps) {
                     label: 'Expediente Documental',
                     href: '/documentos',
                     icon: FileCheck,
+                    subItems: [
+                        { label: 'Validación de Soportes', href: '/documentos' },
+                        { label: 'Archivo Digital (Drive)', href: '/documentos/archivo' },
+                    ],
                 },
                 {
                     label: 'Transcripción EPS / ARL',

@@ -76,10 +76,10 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 3.2.5 Botones aprobar/rechazar/solicitar corrección
 
 #### 3.3 Archivo Digital
-- [ ] 3.3.1 Crear página archivo documental (vista tipo Google Drive)
-- [ ] 3.3.2 Filtros por entidad, colaborador, fecha, tipo
-- [ ] 3.3.3 Preview de PDF e imágenes
-- [ ] 3.3.4 Acciones descargar, reemplazar, archivar
+- [x] 3.3.1 Crear página archivo documental (vista tipo Google Drive)
+- [x] 3.3.2 Filtros por entidad, colaborador, fecha, tipo
+- [x] 3.3.3 Preview de PDF e imágenes
+- [x] 3.3.4 Acciones descargar, reemplazar, archivar
 
 ---
 
