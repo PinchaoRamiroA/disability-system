@@ -111,18 +111,77 @@ export async function getEstadosDocumento(): Promise<EstadoDocumento[]> {
     }
 }
 
+export type EstadoValidacionDocumento = 'Validado' | 'Rechazado' | 'Incompleto'
+
+export interface ValidarDocumentoPayload {
+    estado?: EstadoValidacionDocumento
+    comentario?: string
+    validado?: boolean
+    observaciones?: string
+}
+
+export interface GetDocumentosParams {
+    id_incapacidad?: number | string
+    estado?: string
+    tipo?: string
+    page?: number
+    limit?: number
+}
+
 /**
- * Valida o rechaza un documento con observaciones
+ * Obtiene documentos según filtros desde /documentos
+ */
+export async function getDocumentos(
+    params?: GetDocumentosParams
+): Promise<{ items: IncapacidadDocumento[]; total: number }> {
+    try {
+        const response = await apiClient.get<{
+            success: boolean
+            data: { items?: IncapacidadDocumento[]; total?: number } | IncapacidadDocumento[]
+            total?: number
+        }>('/documentos', {
+            params,
+        })
+
+        if (Array.isArray(response.data?.data)) {
+            return { items: response.data.data, total: response.data.data.length }
+        }
+        if (response.data?.data && Array.isArray(response.data.data.items)) {
+            return {
+                items: response.data.data.items,
+                total: response.data.data.total ?? response.data.data.items.length,
+            }
+        }
+        return { items: [], total: 0 }
+    } catch {
+        return { items: [], total: 0 }
+    }
+}
+
+/**
+ * Valida, rechaza o solicita corrección de un documento (con comentario obligatorio para rechazos o correcciones)
  */
 export async function validarDocumento(
     documentoId: number | string,
-    data: { validado: boolean; observaciones?: string }
+    data: ValidarDocumentoPayload
 ): Promise<IncapacidadDocumento> {
+    let estado = data.estado
+    const comentario = data.comentario ?? data.observaciones ?? ''
+
+    if (!estado && typeof data.validado === 'boolean') {
+        estado = data.validado ? 'Validado' : 'Rechazado'
+    }
+
+    const payload = {
+        estado: estado || 'Validado',
+        comentario: comentario,
+    }
+
     const response = await apiClient.patch<{
         success: boolean
         message?: string
         data: IncapacidadDocumento
-    }>(`/documentos/${documentoId}/validar`, data)
+    }>(`/documentos/${documentoId}/validar`, payload)
 
     return response.data.data
 }
@@ -137,6 +196,7 @@ export async function deleteDocumento(documentoId: number | string): Promise<voi
 export const documentoService = {
     uploadDocumento,
     getIncapacidadDocumentos,
+    getDocumentos,
     getDocumentosRequeridos,
     getTiposDocumento,
     getEstadosDocumento,

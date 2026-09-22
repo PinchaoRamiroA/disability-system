@@ -18,7 +18,7 @@ interface DocumentChecklistProps {
     onQuickUpload?: (tipo: string) => void
 }
 
-type RequirementStatus = 'validado' | 'pendiente' | 'rechazado' | 'faltante'
+type RequirementStatus = 'validado' | 'pendiente' | 'incompleto' | 'rechazado' | 'faltante'
 
 interface ChecklistItem {
     key: string
@@ -61,6 +61,8 @@ export function DocumentChecklist({
                 const estado = (matchingDoc.estado || '').toLowerCase()
                 if (estado.includes('valid')) {
                     status = 'validado'
+                } else if (estado.includes('incomplet')) {
+                    status = 'incompleto'
                 } else if (estado.includes('rechaz') || estado.includes('inval')) {
                     status = 'rechazado'
                 } else {
@@ -80,7 +82,7 @@ export function DocumentChecklist({
     // Estadísticas de completitud
     const totalRequired = checklistItems.length
     const completedCount = checklistItems.filter(
-        (item) => item.status === 'validado' || item.status === 'pendiente'
+        (item) => item.status === 'validado'
     ).length
     const percentage =
         totalRequired > 0 ? Math.round((completedCount / totalRequired) * 100) : 100
@@ -136,6 +138,7 @@ export function DocumentChecklist({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
                 {checklistItems.map((item) => {
                     const isVal = item.status === 'validado'
+                    const isIncomp = item.status === 'incompleto'
                     const isPend = item.status === 'pendiente'
                     const isRech = item.status === 'rechazado'
                     const isFalt = item.status === 'faltante'
@@ -146,8 +149,10 @@ export function DocumentChecklist({
                             className={`p-3.5 rounded-xl border transition flex items-start justify-between gap-3 ${
                                 isVal
                                     ? 'bg-emerald-500/5 border-emerald-500/30'
+                                    : isIncomp
+                                    ? 'bg-amber-500/10 border-amber-500/40 shadow-sm shadow-amber-500/5'
                                     : isPend
-                                    ? 'bg-amber-500/5 border-amber-500/30'
+                                    ? 'bg-blue-500/5 border-blue-500/30'
                                     : isRech
                                     ? 'bg-red-500/5 border-red-500/30'
                                     : 'bg-[#111827] border-[#334155]'
@@ -158,7 +163,10 @@ export function DocumentChecklist({
                                     {isVal && (
                                         <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                                     )}
-                                    {isPend && <Clock className="h-4 w-4 text-amber-400" />}
+                                    {isIncomp && (
+                                        <AlertTriangle className="h-4 w-4 text-amber-400" />
+                                    )}
+                                    {isPend && <Clock className="h-4 w-4 text-blue-400" />}
                                     {isRech && <XCircle className="h-4 w-4 text-red-400" />}
                                     {isFalt && (
                                         <AlertTriangle className="h-4 w-4 text-[#64748b]" />
@@ -175,8 +183,13 @@ export function DocumentChecklist({
                                                 ✅ Validado
                                             </span>
                                         )}
-                                        {isPend && (
+                                        {isIncomp && (
                                             <span className="text-amber-400 font-medium">
+                                                ⚠️ Subsanación Requerida
+                                            </span>
+                                        )}
+                                        {isPend && (
+                                            <span className="text-blue-400 font-medium">
                                                 ⏳ En Revisión
                                             </span>
                                         )}
@@ -191,16 +204,21 @@ export function DocumentChecklist({
                                             </span>
                                         )}
                                     </div>
+                                    {isIncomp && item.doc?.comentario && (
+                                        <p className="text-[10px] text-amber-300/90 italic truncate max-w-[200px]" title={item.doc.comentario}>
+                                            Obs: {item.doc.comentario}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Botón rápido de adjuntar para faltantes o rechazados */}
-                            {(isFalt || isRech) && onQuickUpload && (
+                            {/* Botón rápido de adjuntar para faltantes, incompletos o rechazados */}
+                            {(isFalt || isIncomp || isRech) && onQuickUpload && (
                                 <button
                                     type="button"
                                     onClick={() => onQuickUpload(item.key)}
                                     className="p-1.5 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/30 transition shrink-0 cursor-pointer"
-                                    title={`Adjuntar ${item.title}`}
+                                    title={`Adjuntar o subsanar ${item.title}`}
                                 >
                                     <Upload className="h-3 w-3" />
                                 </button>

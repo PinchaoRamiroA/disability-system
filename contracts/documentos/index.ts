@@ -37,8 +37,10 @@ export const CreateDocumentoRequestSchema = z.object({
 export type CreateDocumentoRequest = z.infer<typeof CreateDocumentoRequestSchema>;
 
 export const ValidateDocumentoRequestSchema = z.object({
-  validado: z.boolean(),
+  validado: z.boolean().optional(),
+  estado: z.enum(['Validado', 'Rechazado', 'Incompleto']).optional(),
   observaciones: z.string().optional(),
+  comentario: z.string().optional(),
 });
 
 export type ValidateDocumentoRequest = z.infer<typeof ValidateDocumentoRequestSchema>;

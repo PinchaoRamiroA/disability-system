@@ -69,11 +69,11 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 3.1.6 Componente checklist visual (✅ completo, ⚠️ faltante, ❌ inválido)
 
 #### 3.2 Validación de Documentos
-- [ ] 3.2.1 Crear página validación documental
-- [ ] 3.2.2 Integrar GET /incapacidades/tipos/{id}/documentos-requeridos
-- [ ] 3.2.3 Integrar PATCH /documentos/{id}/validar
-- [ ] 3.2.4 Checklist visual por tipo de incapacidad
-- [ ] 3.2.5 Botones aprobar/rechazar/solicitar corrección
+- [x] 3.2.1 Crear página validación documental
+- [x] 3.2.2 Integrar GET /incapacidades/tipos/{id}/documentos-requeridos
+- [x] 3.2.3 Integrar PATCH /documentos/{id}/validar
+- [x] 3.2.4 Checklist visual por tipo de incapacidad
+- [x] 3.2.5 Botones aprobar/rechazar/solicitar corrección
 
 #### 3.3 Archivo Digital
 - [ ] 3.3.1 Crear página archivo documental (vista tipo Google Drive)

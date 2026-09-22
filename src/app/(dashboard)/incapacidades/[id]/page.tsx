@@ -4,6 +4,7 @@ import React, { use, useEffect, useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import {
     AlertCircle,
+    AlertTriangle,
     ArrowLeft,
     Building2,
     Calendar,
@@ -19,8 +20,10 @@ import {
     PhoneCall,
     Receipt,
     RefreshCw,
+    Scale,
     Upload,
     X,
+    XCircle,
 } from 'lucide-react'
 import type {
     Incapacidad,
@@ -46,6 +49,7 @@ import { ModalCambiarEstado } from '@/components/incapacidades/ModalCambiarEstad
 import { FileUploader } from '@/components/documentos/FileUploader'
 import { DocumentChecklist } from '@/components/documentos/DocumentChecklist'
 import { DocumentPreviewModal } from '@/components/documentos/DocumentPreviewModal'
+import { ModalValidarDocumento } from '@/components/documentos/ModalValidarDocumento'
 import { useAuth } from '@/hooks/useAuth'
 
 interface PageProps {
@@ -74,6 +78,7 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
     const [uploadTipoModal, setUploadTipoModal] = useState<string | null>(null)
     const [previewDoc, setPreviewDoc] = useState<IncapacidadDocumento | null>(null)
+    const [validarDoc, setValidarDoc] = useState<IncapacidadDocumento | null>(null)
     const [successBanner, setSuccessBanner] = useState<string | null>(null)
 
     // Cargar catálogo de estados
@@ -145,6 +150,31 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
         }
         return hasPermission('editar_incapacidad') || hasPermission('archivar_incapacidad')
     }, [user, isAdmin, hasPermission])
+
+    // Permission check for validating documents (Task 3.2)
+    const canValidarDocumentos = useMemo(() => {
+        if (isAdmin) return true
+        const roleName = user?.rol?.nombre?.toLowerCase() || ''
+        if (
+            roleName.includes('gestión humana') ||
+            roleName.includes('gestion humana') ||
+            roleName.includes('sg-sst') ||
+            roleName.includes('administrador') ||
+            roleName.includes('auditor') ||
+            roleName.includes('médic') ||
+            roleName.includes('medic')
+        ) {
+            return true
+        }
+        return hasPermission('validar_documentos') || hasPermission('editar_incapacidad')
+    }, [user, isAdmin, hasPermission])
+
+    const handleDocumentValidated = useCallback((updatedDoc: IncapacidadDocumento) => {
+        setDocumentos((prev) =>
+            prev.map((d) => (d.id_documento === updatedDoc.id_documento ? updatedDoc : d))
+        )
+        setSuccessBanner(`Soporte "${updatedDoc.nombre}" dictaminado exitosamente como: ${updatedDoc.estado}`)
+    }, [])
 
     // Refetch data reactively after status change (Task 2.4.4)
     const refetchData = useCallback(async () => {
@@ -654,15 +684,28 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                                                             {doc.tipo?.replace(/_/g, ' ')}
                                                         </td>
                                                         <td className="py-3.5 px-4">
-                                                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                                                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${
                                                                 doc.estado === 'Validado'
                                                                     ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                                    : doc.estado === 'Incompleto'
+                                                                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                                                                     : doc.estado === 'Rechazado'
                                                                     ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                                                                    : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                                                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                                                             }`}>
-                                                                {doc.estado || 'Pendiente'}
+                                                                {doc.estado === 'Validado' && <CheckCircle2 className="h-3 w-3" />}
+                                                                {doc.estado === 'Incompleto' && <AlertTriangle className="h-3 w-3" />}
+                                                                {doc.estado === 'Rechazado' && <XCircle className="h-3 w-3" />}
+                                                                {doc.estado !== 'Validado' && doc.estado !== 'Incompleto' && doc.estado !== 'Rechazado' && (
+                                                                    <Clock className="h-3 w-3" />
+                                                                )}
+                                                                <span>{doc.estado || 'Pendiente'}</span>
                                                             </span>
+                                                            {doc.comentario && (
+                                                                <p className="text-[10px] text-[#94a3b8] italic mt-1 max-w-[200px] truncate" title={doc.comentario}>
+                                                                    Dictamen: {doc.comentario}
+                                                                </p>
+                                                            )}
                                                         </td>
                                                         <td className="py-3.5 px-4 text-[#94a3b8]">
                                                             {doc.fecha_carga || doc.created_at || 'Reciente'}
@@ -678,6 +721,17 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                                                                     <Eye className="h-3 w-3 text-cyan-400" />
                                                                     <span>Ver</span>
                                                                 </button>
+                                                                {canValidarDocumentos && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setValidarDoc(doc)}
+                                                                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition text-xs font-semibold shadow shadow-blue-600/20 cursor-pointer"
+                                                                        title="Dictaminar soporte médico (Aprobar, Rechazar o Solicitar Corrección)"
+                                                                    >
+                                                                        <Scale className="h-3 w-3" />
+                                                                        <span>Dictaminar</span>
+                                                                    </button>
+                                                                )}
                                                                 {doc.url && (
                                                                     <a
                                                                         href={doc.url}
@@ -930,6 +984,18 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                 isOpen={!!previewDoc}
                 onClose={() => setPreviewDoc(null)}
                 documento={previewDoc}
+            />
+
+            {/* Modal de Dictamen / Validación (Task 3.2.5) */}
+            <ModalValidarDocumento
+                isOpen={Boolean(validarDoc)}
+                onClose={() => setValidarDoc(null)}
+                documento={validarDoc}
+                onValidated={handleDocumentValidated}
+                onPreview={(doc) => {
+                    setValidarDoc(null)
+                    setPreviewDoc(doc)
+                }}
             />
         </div>
     )
