@@ -26,6 +26,7 @@ import {
     marcarTranscripcionEnProceso,
 } from '@/services/transcripcion.service'
 import { ModalTranscribir } from '@/components/transcripciones/ModalTranscribir'
+import { ModalDetallePlazos } from '@/components/transcripciones/ModalDetallePlazos'
 
 type FilterEstado = 'todos' | 'pendiente' | 'en_proceso' | 'por_vencer' | 'vencida'
 
@@ -36,6 +37,11 @@ export default function TranscripcionesPage() {
     const [filtroEstado, setFiltroEstado] = useState<FilterEstado>('todos')
     const [selectedItemForTranscribir, setSelectedItemForTranscribir] =
         useState<TranscripcionPendienteItem | null>(null)
+    const [selectedPlazosItem, setSelectedPlazosItem] = useState<{
+        id: number
+        titulo?: string
+        entidadNombre?: string
+    } | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [updatingId, setUpdatingId] = useState<number | null>(null)
     const [toastMessage, setToastMessage] = useState<{
@@ -276,6 +282,47 @@ export default function TranscripcionesPage() {
                     </Link>
                 </div>
             </div>
+
+            {/* Banner de Alertas de Vencimiento Próximo (Task 4.2.2) */}
+            {(metrics.porVencer > 0 || metrics.vencidas > 0) && (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-[#111827] border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xl">
+                    <div className="flex items-start sm:items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                            <Flame className="h-5 w-5 animate-bounce" />
+                        </div>
+                        <div>
+                            <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                                <span>Alertas de Vencimiento Próximo ante EPS / ARL</span>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                    {metrics.porVencer + metrics.vencidas} casos prioritarios
+                                </span>
+                            </h3>
+                            <p className="text-[11px] sm:text-xs text-[#cbd5e1] mt-0.5">
+                                Hay <strong className="text-amber-400">{metrics.porVencer} incapacidades</strong> con término perentorio ≤ 3 días hábiles y <strong className="text-rose-400">{metrics.vencidas} extemporáneas</strong>. Radique a tiempo para garantizar el reconocimiento del subsidio económico.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                        {metrics.porVencer > 0 && (
+                            <button
+                                onClick={() => setFiltroEstado('por_vencer')}
+                                className="px-3 py-1.5 rounded-xl text-xs font-semibold text-amber-300 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 transition"
+                            >
+                                Filtrar por vencer ({metrics.porVencer})
+                            </button>
+                        )}
+                        {metrics.vencidas > 0 && (
+                            <button
+                                onClick={() => setFiltroEstado('vencida')}
+                                className="px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-300 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 transition"
+                            >
+                                Filtrar vencidas ({metrics.vencidas})
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Cards de Métricas */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -569,6 +616,20 @@ export default function TranscripcionesPage() {
                                                         </button>
                                                     )}
 
+                                                    {/* Ver Plazos Legales y Alertas (Task 4.2.1) */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedPlazosItem({
+                                                            id: item.id_incapacidad,
+                                                            titulo: item.titulo,
+                                                            entidadNombre: item.entidad?.nombre,
+                                                        })}
+                                                        className="p-1.5 rounded-lg text-[#94a3b8] hover:text-purple-400 hover:bg-purple-500/10 border border-transparent hover:border-purple-500/20 transition"
+                                                        title="Ver plazos legales y alertas de vencimiento"
+                                                    >
+                                                        <Clock className="h-3.5 w-3.5" />
+                                                    </button>
+
                                                     {/* Ver Detalle */}
                                                     <Link
                                                         href={`/incapacidades/${item.id_incapacidad}`}
@@ -618,6 +679,15 @@ export default function TranscripcionesPage() {
                     fetchData()
                 }}
                 item={selectedItemForTranscribir}
+            />
+
+            {/* Modal de Plazos y Vencimientos Legales (Task 4.2.1) */}
+            <ModalDetallePlazos
+                isOpen={!!selectedPlazosItem}
+                onClose={() => setSelectedPlazosItem(null)}
+                incapacidadId={selectedPlazosItem?.id ?? null}
+                titulo={selectedPlazosItem?.titulo}
+                entidadNombre={selectedPlazosItem?.entidadNombre}
             />
         </div>
     )

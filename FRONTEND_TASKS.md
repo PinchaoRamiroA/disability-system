@@ -94,9 +94,9 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 4.1.6 Upload de evidencia de radicación
 
 #### 4.2 Plazos y Vencimientos
-- [ ] 4.2.1 Integrar GET /incapacidades/{id}/plazos
-- [ ] 4.2.2 Mostrar alertas de vencimiento próximo
-- [ ] 4.2.3 Notificaciones de incapacidades por vencer
+- [x] 4.2.1 Integrar GET /incapacidades/{id}/plazos
+- [x] 4.2.2 Mostrar alertas de vencimiento próximo
+- [x] 4.2.3 Notificaciones de incapacidades por vencer
 
 ---
 

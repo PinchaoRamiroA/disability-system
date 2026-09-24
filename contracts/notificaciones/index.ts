@@ -39,7 +39,8 @@ export type CreateNotificacionRequest = z.infer<typeof CreateNotificacionRequest
 export const UnreadCountResponseSchema = z.object({
   success: z.boolean(),
   data: z.object({
-    count: z.number(),
+    count: z.number().optional(),
+    total: z.number().optional(),
   }),
 });
 

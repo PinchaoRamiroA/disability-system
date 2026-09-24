@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
     Menu,
     Search,
-    Bell,
     ChevronRight,
     LogOut,
     Shield,
@@ -14,6 +13,7 @@ import {
     CheckCircle2,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { NotificationDropdown } from '@/components/layout/NotificationDropdown'
 
 interface TopbarProps {
     onOpenMobileSidebar: () => void
@@ -147,18 +147,8 @@ export function Topbar({ onOpenMobileSidebar }: TopbarProps) {
                     <span className="font-medium text-[#94a3b8]">Disability System v1.0</span>
                 </div>
 
-                {/* Notifications Bell */}
-                <Link
-                    href="/alertas"
-                    title="Centro de Alertas y Vencimientos"
-                    className="relative p-2 rounded-lg bg-[#0f172a] hover:bg-[#1e293b] border border-[#334155] text-[#94a3b8] hover:text-white transition"
-                >
-                    <Bell className="h-4 w-4" />
-                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                    </span>
-                </Link>
+                {/* Notifications Dropdown (Task 4.2.3) */}
+                <NotificationDropdown />
 
                 {/* User Dropdown */}
                 <div className="relative" ref={menuRef}>
