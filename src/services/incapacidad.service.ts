@@ -289,6 +289,20 @@ export async function getIncapacidadSeguimientos(
     }
 }
 
+export {
+    getTranscripcionesPendientes,
+    marcarTranscripcionEnProceso,
+    transcribirIncapacidad,
+    uploadEvidenciaRadicacion,
+} from '@/services/transcripcion.service'
+
+import {
+    getTranscripcionesPendientes,
+    marcarTranscripcionEnProceso,
+    transcribirIncapacidad,
+    uploadEvidenciaRadicacion,
+} from '@/services/transcripcion.service'
+
 export const incapacidadService = {
     getIncapacidades,
     getIncapacidadById,
@@ -304,6 +318,10 @@ export const incapacidadService = {
     getIncapacidadHistorial,
     getIncapacidadPagos,
     getIncapacidadSeguimientos,
+    getTranscripcionesPendientes,
+    marcarTranscripcionEnProceso,
+    transcribirIncapacidad,
+    uploadEvidenciaRadicacion,
 }
 
 export default incapacidadService

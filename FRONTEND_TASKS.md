@@ -86,12 +86,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 ### 🟢 PRIORIDAD 4 - TRANSCRIPCIÓN EPS/ARL (Semana 3)
 
 #### 4.1 Radicación y Transcripción
-- [ ] 4.1.1 Crear página transcripción
-- [ ] 4.1.2 Integrar GET /incapacidades/transcripciones/pendientes
-- [ ] 4.1.3 Tabla con semáforo por días restantes (verde/amarillo/rojo)
-- [ ] 4.1.4 Integrar POST /incapacidades/{id}/transcribir (registrar radicación)
-- [ ] 4.1.5 Integrar PATCH /incapacidades/{id}/transcripcion (marcar en proceso)
-- [ ] 4.1.6 Upload de evidencia de radicación
+- [x] 4.1.1 Crear página transcripción
+- [x] 4.1.2 Integrar GET /incapacidades/transcripciones/pendientes
+- [x] 4.1.3 Tabla con semáforo por días restantes (verde/amarillo/rojo)
+- [x] 4.1.4 Integrar POST /incapacidades/{id}/transcribir (registrar radicación)
+- [x] 4.1.5 Integrar PATCH /incapacidades/{id}/transcripcion (marcar en proceso)
+- [x] 4.1.6 Upload de evidencia de radicación
 
 #### 4.2 Plazos y Vencimientos
 - [ ] 4.2.1 Integrar GET /incapacidades/{id}/plazos

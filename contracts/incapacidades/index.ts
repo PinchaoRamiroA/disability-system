@@ -105,16 +105,50 @@ export const UpdateTranscripcionRequestSchema = z.object({
 export type UpdateTranscripcionRequest = z.infer<typeof UpdateTranscripcionRequestSchema>;
 
 export const TranscripcionSchema = z.object({
-  id_transcripcion: z.number(),
+  id_transcripcion: z.number().optional(),
   id_incapacidad: z.number(),
-  fecha_transcripcion: z.string(),
-  numero_radicado: z.string(),
+  fecha_transcripcion: z.string().optional(),
+  numero_radicado: z.string().optional(),
   estado_transcripcion: z.string(),
-  observaciones: z.string().nullable(),
-  created_at: z.string(),
+  observaciones: z.string().nullable().optional(),
+  created_at: z.string().optional(),
 });
 
 export type Transcripcion = z.infer<typeof TranscripcionSchema>;
+
+export const TranscripcionPendienteItemSchema = z.object({
+  id_incapacidad: z.number(),
+  id_usuario: z.number().optional(),
+  titulo: z.string(),
+  origen: z.string().optional(),
+  fecha_inicio: z.string().optional(),
+  fecha_fin: z.string().nullable().optional(),
+  fecha_radicacion: z.string().nullable().optional(),
+  estado_transcripcion: z.string(),
+  fecha_limite_transcripcion: z.string().nullable().optional(),
+  dias_restantes: z.number().nullable().optional(),
+  alerta_vencimiento: z.string().nullable().optional(),
+  observaciones_transcripcion: z.string().nullable().optional(),
+  entidad: z.object({
+    id_entidad: z.number(),
+    nombre: z.string(),
+    tipo: z.string(),
+    plazo_transcripcion_dias: z.number().nullable().optional(),
+    tiempo_maximo_pago_dias: z.number().nullable().optional(),
+    requiere_transcripcion: z.boolean().optional(),
+  }).nullable().optional(),
+  tipo: z.object({
+    id_tipo: z.number(),
+    nombre: z.string(),
+    origen: z.string().optional(),
+  }).nullable().optional(),
+  estado: z.object({
+    id_estado: z.number(),
+    nombre: z.string(),
+  }).nullable().optional(),
+});
+
+export type TranscripcionPendienteItem = z.infer<typeof TranscripcionPendienteItemSchema>;
 
 export const HistorialSchema = z.object({
   id_historial: z.number(),
