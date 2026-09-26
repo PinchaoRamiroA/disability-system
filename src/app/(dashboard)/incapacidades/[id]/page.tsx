@@ -53,6 +53,7 @@ import { DocumentPreviewModal } from '@/components/documentos/DocumentPreviewMod
 import { ModalValidarDocumento } from '@/components/documentos/ModalValidarDocumento'
 import { SeguimientosTimeline } from '@/components/cobros/SeguimientosTimeline'
 import { ModalCrearSeguimiento } from '@/components/cobros/ModalCrearSeguimiento'
+import { ModalRegistrarPago } from '@/components/cobros/ModalRegistrarPago'
 import { useAuth } from '@/hooks/useAuth'
 
 interface PageProps {
@@ -83,6 +84,7 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
     const [previewDoc, setPreviewDoc] = useState<IncapacidadDocumento | null>(null)
     const [validarDoc, setValidarDoc] = useState<IncapacidadDocumento | null>(null)
     const [isModalSeguimientoOpen, setIsModalSeguimientoOpen] = useState(false)
+    const [isModalPagoOpen, setIsModalPagoOpen] = useState(false)
     const [successBanner, setSuccessBanner] = useState<string | null>(null)
 
     // Cargar catálogo de estados
@@ -171,6 +173,27 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
             return true
         }
         return hasPermission('validar_documentos') || hasPermission('editar_incapacidad')
+    }, [user, isAdmin, hasPermission])
+
+    // Permission check for registering payments (Task 5.3)
+    const canRegistrarPago = useMemo(() => {
+        if (isAdmin) return true
+        const roleName = user?.rol?.nombre?.toLowerCase() || ''
+        if (
+            roleName.includes('gestión humana') ||
+            roleName.includes('gestion humana') ||
+            roleName.includes('contab') ||
+            roleName.includes('tesorer') ||
+            roleName.includes('cartera') ||
+            roleName.includes('administrador')
+        ) {
+            return true
+        }
+        return (
+            hasPermission('registrar_pago') ||
+            hasPermission('crear_pago') ||
+            hasPermission('editar_incapacidad')
+        )
     }, [user, isAdmin, hasPermission])
 
     const handleDocumentValidated = useCallback((updatedDoc: IncapacidadDocumento) => {
@@ -862,7 +885,17 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div className="text-right">
+                                    {canRegistrarPago && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsModalPagoOpen(true)}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium shadow-sm transition cursor-pointer"
+                                        >
+                                            <Plus className="h-3.5 w-3.5" />
+                                            Registrar Pago
+                                        </button>
+                                    )}
+                                    <div className="text-right border-l border-[#334155] pl-3">
                                         <span className="text-[10px] text-[#94a3b8] uppercase block">Total Reconocido</span>
                                         <span className="text-sm font-bold text-emerald-400">
                                             ${totalPagado.toLocaleString('es-CO')} COP
@@ -992,6 +1025,22 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                     setPreviewDoc(doc)
                 }}
             />
+
+            {/* Modal de Registro de Pago (Task 5.3) */}
+            {incapacidad && (
+                <ModalRegistrarPago
+                    isOpen={isModalPagoOpen}
+                    onClose={() => setIsModalPagoOpen(false)}
+                    onSuccess={(nuevo) => {
+                        setPagos((prev) => [nuevo, ...prev])
+                        setSuccessBanner('Pago registrado exitosamente.')
+                    }}
+                    preselectedIncapacidadId={incapacidad.id_incapacidad}
+                    preselectedIncapacidadTitle={incapacidad.titulo}
+                    preselectedEntidadId={incapacidad.entidad?.id_entidad}
+                    preselectedEntidadNombre={incapacidad.entidad?.nombre}
+                />
+            )}
         </div>
     )
 }

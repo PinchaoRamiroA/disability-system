@@ -211,3 +211,83 @@ export async function getPagos(params?: {
     }
     return { items: [], total: 0, page: 1, limit: 20 }
 }
+
+export const TIPOS_PAGO = [
+    { value: 'Transferencia bancaria', label: 'Transferencia bancaria', desc: 'Giro electrónico interbancario de la EPS / ARL' },
+    { value: 'Consignación', label: 'Consignación bancaria', desc: 'Depósito en ventanilla bancaria con volante' },
+    { value: 'Pago total', label: 'Pago total reconocido', desc: 'Liquidación completa al 100% del subsidio reclamado' },
+    { value: 'Pago parcial', label: 'Pago parcial / Con glosa', desc: 'Reconocimiento incompleto sujeto a conciliación' },
+    { value: 'Reintegro', label: 'Reintegro', desc: 'Reintegro o devolución de fondos de la entidad' },
+]
+
+export const ESTADOS_PAGO = [
+    { value: 'Pagado', label: 'Pagado', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
+    { value: 'Parcial', label: 'Pago Parcial', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
+    { value: 'Pendiente', label: 'Pendiente de Giro', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+    { value: 'En proceso', label: 'En proceso contable', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
+    { value: 'Conciliado', label: 'Conciliado', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
+    { value: 'Rechazado', label: 'Rechazado / Glosado', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
+    { value: 'Anulado', label: 'Anulado', color: 'text-slate-400 bg-slate-500/10 border-slate-500/20' },
+]
+
+/**
+ * Registra un pago de incapacidad (POST /cobros/pagos) y opcionalmente adjunta soporte
+ */
+export async function crearPago(
+    payload: {
+        id_incapacidad: number
+        id_entidad: number
+        tipo_pago: string
+        estado_pago?: string
+        valor: string
+        fecha_pago: string
+        descripcion?: string
+        periodo_contable?: string
+    },
+    archivoSoporte?: File
+): Promise<Pago> {
+    const response = await apiClient.post<{
+        success: boolean
+        data: Pago
+        message?: string
+    }>('/cobros/pagos', payload)
+
+    const nuevoPago = response.data.data
+
+    if (archivoSoporte && payload.id_incapacidad) {
+        try {
+            const { uploadDocumento } = await import('@/services/incapacidad.service')
+            await uploadDocumento(payload.id_incapacidad, archivoSoporte, 'soporte_pago')
+        } catch (uploadErr) {
+            console.warn('Pago registrado pero falló la carga del soporte:', uploadErr)
+        }
+    }
+
+    return nuevoPago
+}
+
+/**
+ * Concilia un pago contablemente (PATCH /cobros/pagos/{id}/conciliar)
+ */
+export async function conciliarPago(
+    id: number | string,
+    data: {
+        conciliado: boolean
+        estado_pago?: string
+        descripcion?: string
+    }
+): Promise<Pago> {
+    const response = await apiClient.patch<{
+        success: boolean
+        data: Pago
+        message?: string
+    }>(`/cobros/pagos/${id}/conciliar`, data)
+    return response.data.data
+}
+
+/**
+ * Elimina un pago del sistema
+ */
+export async function eliminarPago(id: number | string): Promise<void> {
+    await apiClient.delete(`/cobros/pagos/${id}`)
+}

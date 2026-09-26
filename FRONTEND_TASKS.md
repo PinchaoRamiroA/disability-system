@@ -116,11 +116,11 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 5.2.4 Integrar escalation flow
 
 #### 5.3 Pagos
-- [ ] 5.3.1 Crear página pagos
-- [ ] 5.3.2 Integrar GET /cobros/pagos
-- [ ] 5.3.3 Integrar POST /cobros/pagos (registrar pago)
-- [ ] 5.3.4 Formulario: entidad, fecha, valor, referencia, archivo soporte
-- [ ] 5.3.5 Tabla con valor esperado vs recibido, diferencias
+- [x] 5.3.1 Crear página pagos
+- [x] 5.3.2 Integrar GET /cobros/pagos
+- [x] 5.3.3 Integrar POST /cobros/pagos (registrar pago)
+- [x] 5.3.4 Formulario: entidad, fecha, valor, referencia, archivo soporte
+- [x] 5.3.5 Tabla con valor esperado vs recibido, diferencias
 
 ---
 
