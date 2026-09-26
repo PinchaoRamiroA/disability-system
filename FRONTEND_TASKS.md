@@ -110,10 +110,10 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 - [x] 5.1.5 Tipos de seguimiento (ver en docs)
 
 #### 5.2 Cobro Jurídico
-- [ ] 5.2.1 Crear página cobro jurídico
-- [ ] 5.2.2 Cards de casos críticos, EPS incumplidas, casos >180 días
-- [ ] 5.2.3 Tabla con estado jurídico, días mora, valor adeudado
-- [ ] 5.2.4 Integrar escalation flow
+- [x] 5.2.1 Crear página cobro jurídico
+- [x] 5.2.2 Cards de casos críticos, EPS incumplidas, casos >180 días
+- [x] 5.2.3 Tabla con estado jurídico, días mora, valor adeudado
+- [x] 5.2.4 Integrar escalation flow
 
 #### 5.3 Pagos
 - [ ] 5.3.1 Crear página pagos
