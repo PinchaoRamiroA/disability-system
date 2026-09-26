@@ -58,9 +58,14 @@ export const SeguimientoSchema = z.object({
   id_seguimiento: z.number(),
   id_incapacidad: z.number(),
   tipo_seguimiento: z.string(),
-  descripcion: z.string(),
-  fecha_contacto: z.string(),
-  created_at: z.string(),
+  descripcion: z.string().nullable().optional(),
+  fecha: z.string().optional(),
+  fecha_contacto: z.string().optional(),
+  resultado: z.string().nullable().optional(),
+  resultado_seguimiento: z.string().nullable().optional(),
+  gestionado_por: z.number().nullable().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export type Seguimiento = z.infer<typeof SeguimientoSchema>;
@@ -81,8 +86,10 @@ export type SeguimientoListResponse = z.infer<typeof SeguimientoListResponseSche
 export const CreateSeguimientoRequestSchema = z.object({
   id_incapacidad: z.number(),
   tipo_seguimiento: z.string(),
-  descripcion: z.string(),
-  fecha_contacto: z.string(),
+  descripcion: z.string().optional(),
+  resultado: z.string().optional(),
+  fecha: z.string().optional(),
+  fecha_contacto: z.string().optional(),
 });
 
 export type CreateSeguimientoRequest = z.infer<typeof CreateSeguimientoRequestSchema>;

@@ -103,11 +103,11 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 ### 🔵 PRIORIDAD 5 - SEGUIMIENTO Y COBRO (Semana 3-4)
 
 #### 5.1 Seguimiento de Cobro
-- [ ] 5.1.1 Crear página seguimiento cobro
-- [ ] 5.1.2 Integrar GET /cobros/seguimientos
-- [ ] 5.1.3 Integrar POST /cobros/seguimientos (registrar seguimiento)
-- [ ] 5.1.4 Timeline de seguimientos (llamadas, correos, respuestas)
-- [ ] 5.1.5 Tipos de seguimiento (ver en docs)
+- [x] 5.1.1 Crear página seguimiento cobro
+- [x] 5.1.2 Integrar GET /cobros/seguimientos
+- [x] 5.1.3 Integrar POST /cobros/seguimientos (registrar seguimiento)
+- [x] 5.1.4 Timeline de seguimientos (llamadas, correos, respuestas)
+- [x] 5.1.5 Tipos de seguimiento (ver en docs)
 
 #### 5.2 Cobro Jurídico
 - [ ] 5.2.1 Crear página cobro jurídico

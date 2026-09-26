@@ -18,6 +18,7 @@ import {
     History,
     Info,
     PhoneCall,
+    Plus,
     Receipt,
     RefreshCw,
     Scale,
@@ -50,6 +51,8 @@ import { FileUploader } from '@/components/documentos/FileUploader'
 import { DocumentChecklist } from '@/components/documentos/DocumentChecklist'
 import { DocumentPreviewModal } from '@/components/documentos/DocumentPreviewModal'
 import { ModalValidarDocumento } from '@/components/documentos/ModalValidarDocumento'
+import { SeguimientosTimeline } from '@/components/cobros/SeguimientosTimeline'
+import { ModalCrearSeguimiento } from '@/components/cobros/ModalCrearSeguimiento'
 import { useAuth } from '@/hooks/useAuth'
 
 interface PageProps {
@@ -79,13 +82,14 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
     const [uploadTipoModal, setUploadTipoModal] = useState<string | null>(null)
     const [previewDoc, setPreviewDoc] = useState<IncapacidadDocumento | null>(null)
     const [validarDoc, setValidarDoc] = useState<IncapacidadDocumento | null>(null)
+    const [isModalSeguimientoOpen, setIsModalSeguimientoOpen] = useState(false)
     const [successBanner, setSuccessBanner] = useState<string | null>(null)
 
     // Cargar catálogo de estados
     useEffect(() => {
         getEstados()
             .then(setEstados)
-            .catch(() => {})
+            .catch(() => { })
     }, [])
 
     useEffect(() => {
@@ -354,11 +358,10 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                             <button
                                 type="button"
                                 onClick={() => setActiveTab('general')}
-                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
-                                    activeTab === 'general'
+                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${activeTab === 'general'
                                         ? 'border-blue-500 text-blue-400 bg-blue-500/5'
                                         : 'border-transparent text-[#94a3b8] hover:text-white hover:border-[#334155]'
-                                }`}
+                                    }`}
                             >
                                 <Info className="h-4 w-4" />
                                 <span>Información General</span>
@@ -367,11 +370,10 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                             <button
                                 type="button"
                                 onClick={() => setActiveTab('documentos')}
-                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
-                                    activeTab === 'documentos'
+                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${activeTab === 'documentos'
                                         ? 'border-blue-500 text-blue-400 bg-blue-500/5'
                                         : 'border-transparent text-[#94a3b8] hover:text-white hover:border-[#334155]'
-                                }`}
+                                    }`}
                             >
                                 <FileText className="h-4 w-4" />
                                 <span>Documentos</span>
@@ -383,11 +385,10 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                             <button
                                 type="button"
                                 onClick={() => setActiveTab('historial')}
-                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
-                                    activeTab === 'historial'
+                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${activeTab === 'historial'
                                         ? 'border-blue-500 text-blue-400 bg-blue-500/5'
                                         : 'border-transparent text-[#94a3b8] hover:text-white hover:border-[#334155]'
-                                }`}
+                                    }`}
                             >
                                 <History className="h-4 w-4" />
                                 <span>Historial & Bitácora</span>
@@ -399,11 +400,10 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                             <button
                                 type="button"
                                 onClick={() => setActiveTab('seguimientos')}
-                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
-                                    activeTab === 'seguimientos'
+                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${activeTab === 'seguimientos'
                                         ? 'border-blue-500 text-blue-400 bg-blue-500/5'
                                         : 'border-transparent text-[#94a3b8] hover:text-white hover:border-[#334155]'
-                                }`}
+                                    }`}
                             >
                                 <PhoneCall className="h-4 w-4" />
                                 <span>Seguimientos de Cobro</span>
@@ -415,11 +415,10 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                             <button
                                 type="button"
                                 onClick={() => setActiveTab('pagos')}
-                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
-                                    activeTab === 'pagos'
+                                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${activeTab === 'pagos'
                                         ? 'border-blue-500 text-blue-400 bg-blue-500/5'
                                         : 'border-transparent text-[#94a3b8] hover:text-white hover:border-[#334155]'
-                                }`}
+                                    }`}
                             >
                                 <CreditCard className="h-4 w-4" />
                                 <span>Pagos & Conciliación</span>
@@ -684,15 +683,14 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                                                             {doc.tipo?.replace(/_/g, ' ')}
                                                         </td>
                                                         <td className="py-3.5 px-4">
-                                                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${
-                                                                doc.estado === 'Validado'
+                                                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${doc.estado === 'Validado'
                                                                     ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                                                     : doc.estado === 'Incompleto'
-                                                                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                                                    : doc.estado === 'Rechazado'
-                                                                    ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                                                                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                                                            }`}>
+                                                                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                                                        : doc.estado === 'Rechazado'
+                                                                            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                                                            : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                                                                }`}>
                                                                 {doc.estado === 'Validado' && <CheckCircle2 className="h-3 w-3" />}
                                                                 {doc.estado === 'Incompleto' && <AlertTriangle className="h-3 w-3" />}
                                                                 {doc.estado === 'Rechazado' && <XCircle className="h-3 w-3" />}
@@ -806,50 +804,48 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
 
                     {/* Tab 4: Seguimientos */}
                     {activeTab === 'seguimientos' && (
-                        <div className="rounded-2xl bg-[#111827] border border-[#334155] p-6 space-y-4">
-                            <div className="flex items-center justify-between pb-3 border-b border-[#334155]/60">
+                        <div className="rounded-2xl bg-[#111827] border border-[#334155] p-6 space-y-5">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#334155]/60">
                                 <div>
                                     <h2 className="text-sm font-semibold text-white">
                                         Seguimientos y Acciones de Cobro
                                     </h2>
                                     <p className="text-xs text-[#94a3b8]">
-                                        Registro de contactos y gestiones de cobranza persuasiva o jurídica
+                                        Registro cronológico de gestiones de cobranza persuasiva, llamadas a la entidad y cobro jurídico
                                     </p>
                                 </div>
-                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                                    {seguimientos.length} seguimiento{seguimientos.length !== 1 ? 's' : ''}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                        {seguimientos.length} seguimiento{seguimientos.length !== 1 ? 's' : ''}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalSeguimientoOpen(true)}
+                                        className="px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 transition shadow-sm flex items-center gap-1.5"
+                                    >
+                                        <Plus className="h-3.5 w-3.5" />
+                                        <span>Nuevo Seguimiento</span>
+                                    </button>
+                                </div>
                             </div>
 
-                            {seguimientos.length === 0 ? (
-                                <div className="p-12 text-center rounded-xl bg-[#0f172a] border border-[#334155] space-y-2">
-                                    <PhoneCall className="h-10 w-10 text-[#64748b] mx-auto" />
-                                    <p className="text-sm text-white font-medium">
-                                        No hay seguimientos registrados para esta incapacidad.
-                                    </p>
-                                    <p className="text-xs text-[#94a3b8]">
-                                        Los seguimientos permiten documentar llamadas a EPS/ARL, radicados de peticiones y gestiones persuasivas.
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {seguimientos.map((seg) => (
-                                        <div key={seg.id_seguimiento} className="p-4 rounded-xl bg-[#0f172a] border border-[#334155] space-y-2 text-xs">
-                                            <div className="flex items-center justify-between">
-                                                <span className="font-semibold text-purple-400 uppercase tracking-wider text-[10px]">
-                                                    {seg.tipo_seguimiento}
-                                                </span>
-                                                <span className="text-[#94a3b8] text-[11px]">
-                                                    {seg.fecha_contacto || seg.created_at}
-                                                </span>
-                                            </div>
-                                            <p className="text-[#cbd5e1] leading-relaxed">
-                                                {seg.descripcion}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            <SeguimientosTimeline
+                                seguimientos={seguimientos}
+                                onOpenModal={() => setIsModalSeguimientoOpen(true)}
+                                showIncapacidadLink={false}
+                            />
+
+                            <ModalCrearSeguimiento
+                                isOpen={isModalSeguimientoOpen}
+                                onClose={() => setIsModalSeguimientoOpen(false)}
+                                onSuccess={(nuevo) => {
+                                    setSeguimientos((prev) => [nuevo, ...prev])
+                                    setSuccessBanner(`Seguimiento #${nuevo.id_seguimiento} registrado exitosamente.`)
+                                }}
+                                preselectedIncapacidadId={incapacidad.id_incapacidad}
+                                preselectedIncapacidadTitle={incapacidad.titulo}
+                                preselectedEntidad={incapacidad.entidad.nombre}
+                            />
                         </div>
                     )}
 
@@ -919,11 +915,10 @@ export default function IncapacidadDetailPage({ params }: PageProps) {
                                                         {pago.periodo_contable || 'N/A'}
                                                     </td>
                                                     <td className="py-3.5 px-4 text-right">
-                                                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
-                                                            pago.conciliado
+                                                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${pago.conciliado
                                                                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                                                 : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                                        }`}>
+                                                            }`}>
                                                             {pago.conciliado ? 'Conciliado' : 'Pendiente Conciliación'}
                                                         </span>
                                                     </td>
