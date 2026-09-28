@@ -139,12 +139,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 ### 🟡 PRIORIDAD 7 - DASHBOARD (Semana 4-5)
 
 #### 7.1 Dashboard Principal
-- [ ] 7.1.1 Crear página /dashboard
-- [ ] 7.1.2 KPIs superiores (incapacidades activas, pendientes, pagadas, rechazadas)
-- [ ] 7.1.3 Gráfico pie chart: estados (recibida, transcrita, cobrada, rechazada, pagada)
-- [ ] 7.1.4 Gráfico barras por entidad (SURA, Nueva EPS, Sanitas, SOS)
-- [ ] 7.1.5 Cards alertas: documentos faltantes, >90 días, pagos retrasados, casos jurídicos
-- [ ] 7.1.6 Tabla últimas incapacidades
+- [x] 7.1.1 Crear página /dashboard
+- [x] 7.1.2 KPIs superiores (incapacidades activas, pendientes, pagadas, rechazadas)
+- [x] 7.1.3 Gráfico pie chart: estados (recibida, transcrita, cobrada, rechazada, pagada)
+- [x] 7.1.4 Gráfico barras por entidad (SURA, Nueva EPS, Sanitas, SOS)
+- [x] 7.1.5 Cards alertas: documentos faltantes, >90 días, pagos retrasados, casos jurídicos
+- [x] 7.1.6 Tabla últimas incapacidades
 
 #### 7.2 Estadísticas de Cartera
 - [ ] 7.2.1 Integrar GET /cartera/estadisticas
