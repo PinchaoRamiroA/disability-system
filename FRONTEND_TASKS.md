@@ -127,12 +127,12 @@ Sistema de Gestión de Incapacidades (Disability Management System)
 ### 🟣 PRIORIDAD 6 - CONCILIACIÓN (Semana 4)
 
 #### 6.1 Conciliación Contable
-- [ ] 6.1.1 Crear página conciliación (vista tipo Excel)
-- [ ] 6.1.2 Integrar GET /cobros/pagos?conciliado=false
-- [ ] 6.1.3 Integrar PATCH /cobros/pagos/{id}/conciliar
-- [ ] 6.1.4 Columnas: entidad, colaborador, esperado, pagado, diferencia, estado
-- [ ] 6.1.5 Exportar a Excel
-- [ ] 6.1.6 Marcar diferencias
+- [x] 6.1.1 Crear página conciliación (vista tipo Excel)
+- [x] 6.1.2 Integrar GET /cobros/pagos?conciliado=false
+- [x] 6.1.3 Integrar PATCH /cobros/pagos/{id}/conciliar
+- [x] 6.1.4 Columnas: entidad, colaborador, esperado, pagado, diferencia, estado
+- [x] 6.1.5 Exportar a Excel
+- [x] 6.1.6 Marcar diferencias
 
 ---
 
