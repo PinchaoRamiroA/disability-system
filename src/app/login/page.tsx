@@ -65,7 +65,7 @@ function AuthForm() {
         const apiUrl =
             process.env.NEXT_PUBLIC_API_URL ||
             'https://disability-system-backend.onrender.com/api/v1'
-        fetch(apiUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {})
+        fetch(apiUrl, { method: 'GET', mode: 'no-cors' }).catch(() => { })
     }, [])
 
     // If already authenticated, allow quick navigation to dashboard
@@ -145,7 +145,7 @@ function AuthForm() {
     const handleDemoFill = () => {
         if (activeTab === 'login') {
             setLoginForm({
-                email: 'admin@disabilitysystem.com',
+                email: 'admin@empresa.com',
                 password: 'password123',
             })
         } else {
@@ -277,22 +277,20 @@ function AuthForm() {
                             <button
                                 type="button"
                                 onClick={() => handleTabSwitch('login')}
-                                className={`py-2 text-xs font-semibold rounded-lg transition ${
-                                    activeTab === 'login'
+                                className={`py-2 text-xs font-semibold rounded-lg transition ${activeTab === 'login'
                                         ? 'bg-blue-600 text-white shadow'
                                         : 'text-[#94a3b8] hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 Iniciar Sesión
                             </button>
                             <button
                                 type="button"
                                 onClick={() => handleTabSwitch('register')}
-                                className={`py-2 text-xs font-semibold rounded-lg transition ${
-                                    activeTab === 'register'
+                                className={`py-2 text-xs font-semibold rounded-lg transition ${activeTab === 'register'
                                         ? 'bg-blue-600 text-white shadow'
                                         : 'text-[#94a3b8] hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 Crear Cuenta
                             </button>
